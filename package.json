@@ -4,34 +4,27 @@
     "description": "Just blobcat in status bar 🐱 minimal cute vscode pet",
     "version": "1.0.5",
     "publisher": "blobcat",
-
     "icon": "media/icon.png",
-
     "engines": {
         "vscode": "^1.75.0"
     },
-
     "categories": [
         "Other"
     ],
-
     "keywords": [
-    "blobcat",
-    "cat",
-    "statusbar",
-    "vscode",
-    "pet",
-    "cute",
-    "fun",
-    "extension"
+        "blobcat",
+        "cat",
+        "statusbar",
+        "vscode",
+        "pet",
+        "cute",
+        "fun",
+        "extension"
     ],
-
     "activationEvents": [
         "onStartupFinished"
     ],
-
     "main": "./out/extension.js",
-
     "contributes": {
         "commands": [
             {
@@ -44,23 +37,19 @@
             }
         ]
     },
-
     "scripts": {
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "vscode:prepublish": "npm run compile"
     },
-
     "devDependencies": {
+        "@types/node": "^16.18.126",
         "@types/vscode": "^1.75.0",
-        "@types/node": "16.x",
         "typescript": "^4.9.3"
     },
-
     "repository": {
-    "type": "git",
-    "url": "https://github.com/oceanfromthewave/blobcat"
+        "type": "git",
+        "url": "https://github.com/oceanfromthewave/blobcat"
     },
-
     "license": "MIT"
 }

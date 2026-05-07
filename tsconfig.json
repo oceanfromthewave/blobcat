@@ -3,6 +3,7 @@
         "module": "commonjs",
         "target": "es2020",
         "outDir": "out",
+        "types": ["node"],
         "lib": [
             "es2020",
             "dom"
