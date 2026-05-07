@@ -171,3 +171,13 @@ async function uninstallPatch() {
         vscode.window.showErrorMessage('제거 실패: ' + err.message);
     }
 }
+
+export function deactivate() {
+    try {
+        const jsPath = path.join(vscode.env.appRoot, 'out', 'vs', 'workbench', 'workbench.desktop.main.js');
+        const content = fs.readFileSync(jsPath, 'utf-8');
+        const allPatchRegex = /\/\* (CAT_PATCH|CAT_PET_PATCH_.*?)_START \*\/[\s\S]*?\/\* \1_END \*\//g;
+        if (!allPatchRegex.test(content)) return;
+        fs.writeFileSync(jsPath, content.replace(allPatchRegex, ''));
+    } catch {}
+}
