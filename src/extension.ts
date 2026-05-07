@@ -77,7 +77,6 @@ async function installPatch(silent = false) {
                 transform: scaleY(1.06);
             }
 
-            /* 점프 — squash & stretch */
             @keyframes cat-jump {
                 0%   { transform: translateY(0)    scaleX(1)    scaleY(1); }
                 10%  { transform: translateY(2px)  scaleX(1.18) scaleY(0.82); }
@@ -87,19 +86,19 @@ async function installPatch(silent = false) {
                 84%  { transform: translateY(-2px) scaleX(0.97) scaleY(1.05); }
                 100% { transform: translateY(0)    scaleX(1)    scaleY(1); }
             }
+
             #cat-pet-svg.is-jumping {
                 animation: cat-jump 0.6s cubic-bezier(0.34, 1.36, 0.64, 1) forwards;
                 transition: none;
             }
 
-            /* 호버 — 갸우뚱 + 볼 진하게 (점프 중엔 무시) */
             #cat-pet-container:hover #cat-pet-svg:not(.is-jumping) {
                 transform: rotate(-9deg) scale(1.06);
             }
+
             .cat-cheek { transition: fill 0.25s ease, r 0.25s ease; }
             #cat-pet-container:hover .cat-cheek { fill: #FF9FB3; }
 
-            /* 눈 */
             .cat-eye {
                 transform-origin: center;
                 transform-box: fill-box;
@@ -111,31 +110,30 @@ async function installPatch(silent = false) {
                 0%, 100% { transform: scaleY(1); }
                 50%      { transform: scaleY(0.05); }
             }
-            /* 점프 중엔 눈 ^^ 모양 (납작하게) */
+
             #cat-pet-svg.is-jumping .cat-eye {
                 transform: scaleY(0.18);
             }
 
-            /* 입 표정 토글 */
             .cat-mouth-jump { display: none; }
             #cat-pet-svg.is-jumping .cat-mouth-idle { display: none; }
             #cat-pet-svg.is-jumping .cat-mouth-jump { display: block; }
 
-            /* 꼬리 — 살랑살랑 */
             #cat-pet-tail {
-                transform-origin: 78px 75px;
-                transform-box: fill-box;
+                transform-origin: 76px 76px;
+                transform-box: view-box;
                 animation: cat-tail-wag 1.7s ease-in-out infinite;
             }
+
             @keyframes cat-tail-wag {
                 0%, 100% { transform: rotate(-14deg); }
                 50%      { transform: rotate(16deg); }
             }
+
             #cat-pet-svg.is-jumping #cat-pet-tail {
                 animation-duration: 0.4s;
             }
 
-            /* 점프 파티클 */
             .cat-particle {
                 position: absolute;
                 width: 5px; height: 5px;
@@ -147,6 +145,7 @@ async function installPatch(silent = false) {
                 opacity: 0;
                 animation: cat-particle-pop 0.55s ease-out forwards;
             }
+
             @keyframes cat-particle-pop {
                 0%   { transform: translate(0, 0) scale(0.3); opacity: 1; }
                 60%  { opacity: 0.9; }
@@ -205,6 +204,7 @@ async function installPatch(silent = false) {
     function inject() {
         injectStyle();
         if (document.getElementById('cat-pet-container')) return;
+
         const leftItems = document.querySelector('.part.statusbar .left-items')
             || document.querySelector('.part.statusbar .items-container.left-items');
         if (!leftItems) return;
@@ -215,7 +215,6 @@ async function installPatch(silent = false) {
         const svg = createSVG('svg', { viewBox: '0 0 100 100' });
         svg.id = 'cat-pet-svg';
 
-        // 꼬리는 본체 뒤에 깔리도록 먼저 그림 (별도 그룹)
         const tail = createSVG('path', {
             d: 'M 78 75 Q 92 68 90 52',
             fill: 'none',
@@ -224,34 +223,29 @@ async function installPatch(silent = false) {
             'stroke-linecap': 'round'
         });
         tail.id = 'cat-pet-tail';
-        svg.appendChild(tail);
 
-        // 본체 그룹 — 숨쉬기 transform이 여기 적용됨
         const body = createSVG('g');
         body.setAttribute('class', 'cat-body');
 
+        // ✅ 여기만 수정됨 (핵심)
+        body.appendChild(tail);
+
         const shapes = [
-            // 본체
             {t:'path', a:{d:'M20 80 Q20 40 50 40 Q80 40 80 80 Z', fill:'#FFFFFF', stroke:'#E0E0E0', 'stroke-width':'2'}},
-            // 왼쪽 귀
             {t:'path', a:{d:'M34 41 Q30 30 40 38 Z', fill:'#FFFFFF', stroke:'#E0E0E0'}},
             {t:'path', a:{d:'M35 39 Q32 33 38 37 Z', fill:'#FFD1DC'}},
-            // 오른쪽 귀
             {t:'path', a:{d:'M66 41 Q70 30 60 38 Z', fill:'#FFFFFF', stroke:'#E0E0E0'}},
             {t:'path', a:{d:'M65 39 Q68 33 62 37 Z', fill:'#FFD1DC'}},
-            // 눈
             {t:'circle', a:{cx:'40', cy:'55', r:'4', fill:'#333333', class:'cat-eye'}},
             {t:'circle', a:{cx:'60', cy:'55', r:'4', fill:'#333333', class:'cat-eye'}},
-            // 볼
             {t:'circle', a:{cx:'32', cy:'62', r:'5', fill:'#FFD1DC', class:'cat-cheek'}},
             {t:'circle', a:{cx:'68', cy:'62', r:'5', fill:'#FFD1DC', class:'cat-cheek'}},
-            // 입 — idle
-            {t:'path', a:{d:'M45 65 Q50 70 55 65', fill:'none', stroke:'#333333', 'stroke-width':'2', 'stroke-linecap':'round', class:'cat-mouth-idle'}},
-            // 입 — jump (큰 미소)
-            {t:'path', a:{d:'M43 64 Q50 74 57 64', fill:'none', stroke:'#333333', 'stroke-width':'2', 'stroke-linecap':'round', class:'cat-mouth-jump'}}
+            {t:'path', a:{d:'M45 65 Q50 70 55 65', fill:'none', stroke:'#333333', 'stroke-width':'2', class:'cat-mouth-idle'}},
+            {t:'path', a:{d:'M43 64 Q50 74 57 64', fill:'none', stroke:'#333333', 'stroke-width':'2', class:'cat-mouth-jump'}}
         ];
 
         shapes.forEach(s => body.appendChild(createSVG(s.t, s.a)));
+
         svg.appendChild(body);
         container.appendChild(svg);
         leftItems.appendChild(container);
@@ -280,12 +274,14 @@ async function installPatch(silent = false) {
 
         observer.observe(statusbar, { childList: true, subtree: true, characterData: true });
     }
+
     setInterval(inject, 2000);
 })();
 /* ${PATCH_ID}_END */
 `;
+
         fs.writeFileSync(jsPath, content + patchCode);
-        if (!silent) vscode.window.showInformationMessage('v13 깊게 숨 쉬는 고양이 패치가 완료되었습니다! VS Code를 완전히 재시작하세요.');
+        if (!silent) vscode.window.showInformationMessage('v14 패치 완료! VS Code 재시작하세요.');
     } catch (err: any) {
         if (!silent) vscode.window.showErrorMessage('패치 실패: ' + err.message);
     }
@@ -299,15 +295,10 @@ async function uninstallPatch() {
         const allPatchRegex = /\/\* (CAT_PATCH|CAT_PET_PATCH_.*?)_START \*\/[\s\S]*?\/\* \1_END \*\//g;
         content = content.replace(allPatchRegex, '');
         fs.writeFileSync(jsPath, content);
-        vscode.window.showInformationMessage('모든 고양이 패치가 제거되었습니다.');
+        vscode.window.showInformationMessage('모든 고양이 패치 제거 완료');
     } catch (err: any) {
         vscode.window.showErrorMessage('제거 실패: ' + err.message);
     }
 }
 
-// deactivate에서 패치를 제거하지 않음.
-// VS Code는 normal shutdown / disable / uninstall을 모두 deactivate로만 알리므로,
-// 여기서 정리하면 매 종료마다 디스크 패치가 사라져 다음 세션에 메모리 로드가 안 됨.
-// 잔존 패치 정리는 다음 install 시 installPatch가 모든 이전 CAT_PATCH 블록을 한 번에
-// 지우거나, 사용자가 명령 팔레트에서 'Cat Pet: Remove Status Bar Pet'을 실행해 처리.
 export function deactivate() {}
