@@ -29,97 +29,100 @@ const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const PATCH_ID = 'CAT_PET_PATCH_V13';
 function activate(context) {
-    // ✅ StatusBar: 고정 텍스트 (UX 핵심)
     const myStatusBarItem = vscode.window.createStatusBarItem('cat-pet-signal', vscode.StatusBarAlignment.Left, 10000);
-    myStatusBarItem.text = "🐱 BlobCat";
+    myStatusBarItem.text = "IDLE";
     myStatusBarItem.show();
-    context.subscriptions.push(myStatusBarItem);
-    // ✅ typing 감지 (UI 변경 X, trigger만 사용)
-    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(() => {
-        triggerTypingAnimation();
+    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(e => {
+        if (e.contentChanges.length > 0) {
+            myStatusBarItem.text = "TYPING";
+            setTimeout(() => { myStatusBarItem.text = "IDLE"; }, 250);
+        }
     }));
     context.subscriptions.push(vscode.commands.registerCommand('cat-pet.install', () => installPatch()));
     context.subscriptions.push(vscode.commands.registerCommand('cat-pet.uninstall', () => uninstallPatch()));
     installPatch(true);
 }
 exports.activate = activate;
-/* =========================
-   Typing trigger (DOM patch용)
-========================= */
-function triggerTypingAnimation() {
-    const vscodeApi = globalThis.vscode;
-    // 실제 DOM은 webview/patch 쪽에서 감지
-    const sig = document.querySelector('#cat-pet-signal');
-    if (sig) {
-        sig.setAttribute('data-state', 'typing');
-        setTimeout(() => {
-            sig.setAttribute('data-state', 'idle');
-        }, 300);
-    }
-}
-/* =========================
-   Install Patch
-========================= */
 async function installPatch(silent = false) {
     const appRoot = vscode.env.appRoot;
     const jsPath = path.join(appRoot, 'out', 'vs', 'workbench', 'workbench.desktop.main.js');
     try {
         let content = fs.readFileSync(jsPath, 'utf-8');
-        // 기존 패치 제거
         const allPatchRegex = /\/\* (CAT_PATCH|CAT_PET_PATCH_.*?)_START \*\/[\s\S]*?\/\* \1_END \*\//g;
         content = content.replace(allPatchRegex, '');
+        if (silent && content.includes(PATCH_ID))
+            return;
         const patchCode = `
 /* ${PATCH_ID}_START */
-(function () {
-
-    let injected = false;
-
+(function() {
     function createSVG(tag, attrs = {}) {
         const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
         for (let k in attrs) el.setAttribute(k, attrs[k]);
         return el;
     }
 
-    function inject() {
-        if (injected) return;
-        injected = true;
+    function injectHiderStyle() {
+        if (document.getElementById('cat-pet-hider-style')) return;
+        const style = document.createElement('style');
+        style.id = 'cat-pet-hider-style';
+        style.textContent = \`
+            [id*="cat-pet-signal"] {
+                position: absolute !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
+                width: 0 !important;
+                min-width: 0 !important;
+                max-width: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: 0 !important;
+                overflow: hidden !important;
+                visibility: hidden !important;
+                left: -9999px !important;
+            }
+        \`;
+        document.head.appendChild(style);
+    }
 
+    function inject() {
+        injectHiderStyle();
+        if (document.getElementById('cat-pet-container')) return;
         const leftItems = document.querySelector('.part.statusbar .items-container.left-items');
         if (!leftItems) return;
 
-        // 기존 signal 숨김
-        const signalItem = document.querySelector('[id*="cat-pet-signal"]');
-        if (signalItem) {
-            signalItem.style.position = 'absolute';
-            signalItem.style.opacity = '0';
-            signalItem.style.pointerEvents = 'none';
-            signalItem.style.width = '0';
-        }
-
-        // container
         const container = document.createElement('div');
         container.id = 'cat-pet-container';
         container.style.cssText = 'display:flex; align-items:center; padding:0 8px; height:100%;';
-
+        
         const svg = createSVG('svg', { viewBox: '0 0 100 100' });
         svg.id = 'cat-pet-svg';
-        svg.style.cssText = 'height:24px; width:24px; transition: all 0.35s ease; transform-origin: center bottom;';
+        // 기본 트랜지션을 숨쉬기에 맞게 약간 느리게 설정 (0.4s)
+        svg.style.cssText = 'height:24px; width:24px; transition: all 0.4s ease-in-out; transform-origin: center bottom;';
 
         const g = createSVG('g');
+        g.style.transformOrigin = 'center bottom';
 
         const shapes = [
             {t:'path', a:{d:'M20 80 Q20 40 50 40 Q80 40 80 80 Z', fill:'#FFFFFF', stroke:'#E0E0E0', 'stroke-width':'2'}},
 
-            {t:'path', a:{d:'M34 41 Q30 30 40 38 Z', fill:'#FFFFFF'}},
-            {t:'path', a:{d:'M66 41 Q70 30 60 38 Z', fill:'#FFFFFF'}},
+            // 둥근 왼쪽 귀
+            {t:'path', a:{d:'M34 41 Q30 30 40 38 Z', fill:'#FFFFFF', stroke:'#E0E0E0'}},
+            {t:'path', a:{d:'M35 39 Q32 33 38 37 Z', fill:'#FFD1DC'}},
 
-            {t:'circle', a:{cx:'40', cy:'55', r:'4', fill:'#333'}},
-            {t:'circle', a:{cx:'60', cy:'55', r:'4', fill:'#333'}},
+            // 둥근 오른쪽 귀
+            {t:'path', a:{d:'M66 41 Q70 30 60 38 Z', fill:'#FFFFFF', stroke:'#E0E0E0'}},
+            {t:'path', a:{d:'M65 39 Q68 33 62 37 Z', fill:'#FFD1DC'}},
 
+            // 눈
+            {t:'circle', a:{cx:'40', cy:'55', r:'4', fill:'#333333'}},
+            {t:'circle', a:{cx:'60', cy:'55', r:'4', fill:'#333333'}},
+
+            // 볼
             {t:'circle', a:{cx:'32', cy:'62', r:'5', fill:'#FFD1DC'}},
             {t:'circle', a:{cx:'68', cy:'62', r:'5', fill:'#FFD1DC'}},
 
-            {t:'path', a:{d:'M45 65 Q50 70 55 65', fill:'none', stroke:'#333', 'stroke-width':'2'}}
+            // 입
+            {t:'path', a:{d:'M45 65 Q50 70 55 65', fill:'none', stroke:'#333333', 'stroke-width':'2'}}
         ];
 
         shapes.forEach(s => g.appendChild(createSVG(s.t, s.a)));
@@ -127,71 +130,55 @@ async function installPatch(silent = false) {
         container.appendChild(svg);
         leftItems.appendChild(container);
 
-        /* =========================
-           Idle breathing animation
-        ========================= */
-        let scale = 1;
+        // 숨쉬기 애니메이션 (Idle) - 이제 티가 확 납니다!
+        let breathScale = 1;
         setInterval(() => {
             const cat = document.getElementById('cat-pet-svg');
-            if (!cat) return;
-
-            const state = cat.getAttribute('data-state');
-
-            if (state !== 'typing') {
-                scale = scale === 1 ? 1.08 : 1;
-                cat.style.transform = \`scaleY(\${scale})\`;
+            if (cat && !cat.classList.contains('is-jumping')) {
+                breathScale = (breathScale === 1) ? 1.10 : 1;
+                cat.style.transform = \`scaleY(\${breathScale})\`;
             }
-        }, 1200);
+        }, 1000);
 
-        /* =========================
-           Typing reaction animation
-        ========================= */
         const observer = new MutationObserver(() => {
+            const sig = document.querySelector('[id*="cat-pet-signal"]');
+            const isTyping = sig && (sig.textContent || "").includes('TYPING');
             const cat = document.getElementById('cat-pet-svg');
-            if (!cat) return;
-
-            const sig = document.querySelector('#cat-pet-signal');
-            const state = sig?.getAttribute('data-state');
-
-            if (state === 'typing' && !cat.classList.contains('jump')) {
-                cat.classList.add('jump');
-
-                cat.style.transition = 'all 0.12s ease';
-                cat.style.transform = 'translateY(-6px) scale(0.95, 1.1)';
-
+            
+            if (cat && isTyping && !cat.classList.contains('is-jumping')) {
+                cat.classList.add('is-jumping');
+                // 점프 시에는 트랜지션을 빠르게 (0.1s)
+                cat.style.transition = 'all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                cat.style.transform = 'translateY(-5px) scaleX(0.9) scaleY(1.1)';
+                
                 setTimeout(() => {
-                    cat.classList.remove('jump');
+                    cat.classList.remove('is-jumping');
+                    // 다시 숨쉬기용 트랜지션으로 복구 (0.4s)
+                    cat.style.transition = 'all 0.4s ease-in-out';
                     cat.style.transform = 'translateY(0) scale(1)';
-                    cat.style.transition = 'all 0.35s ease';
-                }, 180);
+                }, 200);
             }
         });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
+        observer.observe(document.querySelector('.part.statusbar'), { 
+            childList: true, 
+            subtree: true, 
+            characterData: true 
         });
     }
-
-    inject();
-
+    setInterval(inject, 2000);
 })();
 /* ${PATCH_ID}_END */
 `;
         fs.writeFileSync(jsPath, content + patchCode);
-        if (!silent) {
-            vscode.window.showInformationMessage('BlobCat v13 적용 완료 🐱 (IDLE/TYPING 제거 + 안정화 완료)');
-        }
+        if (!silent)
+            vscode.window.showInformationMessage('v13 깊게 숨 쉬는 고양이 패치가 완료되었습니다! VS Code를 완전히 재시작하세요.');
     }
     catch (err) {
-        if (!silent) {
+        if (!silent)
             vscode.window.showErrorMessage('패치 실패: ' + err.message);
-        }
     }
 }
-/* =========================
-   Uninstall
-========================= */
 async function uninstallPatch() {
     const appRoot = vscode.env.appRoot;
     const jsPath = path.join(appRoot, 'out', 'vs', 'workbench', 'workbench.desktop.main.js');
@@ -200,7 +187,7 @@ async function uninstallPatch() {
         const allPatchRegex = /\/\* (CAT_PATCH|CAT_PET_PATCH_.*?)_START \*\/[\s\S]*?\/\* \1_END \*\//g;
         content = content.replace(allPatchRegex, '');
         fs.writeFileSync(jsPath, content);
-        vscode.window.showInformationMessage('BlobCat 패치 제거 완료');
+        vscode.window.showInformationMessage('모든 고양이 패치가 제거되었습니다.');
     }
     catch (err) {
         vscode.window.showErrorMessage('제거 실패: ' + err.message);
