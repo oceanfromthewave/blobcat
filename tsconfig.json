@@ -10,8 +10,9 @@
         "sourceMap": true,
         "rootDir": "src",
         "strict": true,
-        "moduleResolution": "node",
-        "esModuleInterop": true
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "ignoreDeprecations": "6.0"
     },
     "exclude": [
         "node_modules",
