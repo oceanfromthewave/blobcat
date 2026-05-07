@@ -205,7 +205,8 @@ async function installPatch(silent = false) {
     function inject() {
         injectStyle();
         if (document.getElementById('cat-pet-container')) return;
-        const leftItems = document.querySelector('.part.statusbar .items-container.left-items');
+        const leftItems = document.querySelector('.part.statusbar .left-items')
+            || document.querySelector('.part.statusbar .items-container.left-items');
         if (!leftItems) return;
 
         const container = document.createElement('div');

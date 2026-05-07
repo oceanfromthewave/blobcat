@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- 최신 VS Code의 status bar DOM 변경으로 고양이가 주입되지 않던 문제 수정 (셀렉터 fallback 추가).
+
 ## 1.2.0
 
 - 점프 애니메이션을 squash &amp; stretch 방식으로 재작성 (웅크림 → 점프 → 정점 → 착지 → 회복).

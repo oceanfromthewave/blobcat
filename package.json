@@ -2,7 +2,7 @@
     "name": "cat-pet-statusbar",
     "displayName": "BlobCat - Status Bar Pet 🐱",
     "description": "Just blobcat in status bar 🐱 minimal cute vscode pet",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "publisher": "blobcat",
     "icon": "media/icon.png",
     "engines": {
