@@ -1,0 +1,66 @@
+{
+    "name": "cat-pet-statusbar",
+    "displayName": "BlobCat - Status Bar Pet 🐱",
+    "description": "Just blobcat in status bar 🐱 minimal cute vscode pet",
+    "version": "1.0.1",
+    "publisher": "blobcat",
+
+    "icon": "media/icon.png",
+
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+
+    "categories": [
+        "Other"
+    ],
+
+    "keywords": [
+    "blobcat",
+    "cat",
+    "statusbar",
+    "vscode",
+    "pet",
+    "cute",
+    "fun",
+    "extension"
+    ],
+
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+
+    "main": "./out/extension.js",
+
+    "contributes": {
+        "commands": [
+            {
+                "command": "cat-pet.install",
+                "title": "Cat Pet: Install Status Bar Pet"
+            },
+            {
+                "command": "cat-pet.uninstall",
+                "title": "Cat Pet: Remove Status Bar Pet"
+            }
+        ]
+    },
+
+    "scripts": {
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "vscode:prepublish": "npm run compile"
+    },
+
+    "devDependencies": {
+        "@types/vscode": "^1.75.0",
+        "@types/node": "16.x",
+        "typescript": "^4.9.3"
+    },
+
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/blobcat/cat-pet-statusbar"
+    },
+
+    "license": "MIT"
+}
