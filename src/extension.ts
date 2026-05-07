@@ -305,12 +305,9 @@ async function uninstallPatch() {
     }
 }
 
-export function deactivate() {
-    try {
-        const jsPath = path.join(vscode.env.appRoot, 'out', 'vs', 'workbench', 'workbench.desktop.main.js');
-        const content = fs.readFileSync(jsPath, 'utf-8');
-        const allPatchRegex = /\/\* (CAT_PATCH|CAT_PET_PATCH_.*?)_START \*\/[\s\S]*?\/\* \1_END \*\//g;
-        if (!allPatchRegex.test(content)) return;
-        fs.writeFileSync(jsPath, content.replace(allPatchRegex, ''));
-    } catch {}
-}
+// deactivate에서 패치를 제거하지 않음.
+// VS Code는 normal shutdown / disable / uninstall을 모두 deactivate로만 알리므로,
+// 여기서 정리하면 매 종료마다 디스크 패치가 사라져 다음 세션에 메모리 로드가 안 됨.
+// 잔존 패치 정리는 다음 install 시 installPatch가 모든 이전 CAT_PATCH 블록을 한 번에
+// 지우거나, 사용자가 명령 팔레트에서 'Cat Pet: Remove Status Bar Pet'을 실행해 처리.
+export function deactivate() {}

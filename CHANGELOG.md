@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.2
+
+- **중요 버그 수정**: 1.1.0~1.2.1의 `deactivate()`가 normal VS Code 종료 시점에도 디스크 패치를 제거하던 문제. 이로 인해 다음 세션에서 워크벤치 메모리에 패치가 로드되지 않아 고양이가 영영 보이지 않는 회귀가 있었음. 이번 버전부터 `deactivate()`는 아무것도 하지 않음.
+- 잔존 패치 정리는 다음 두 경로 중 하나로 동작:
+  - 다른 버전을 install하면 `installPatch`가 모든 이전 `CAT_PATCH` 블록을 자동으로 정리 후 새로 주입.
+  - 명령 팔레트에서 `Cat Pet: Remove Status Bar Pet` 수동 실행.
+
 ## 1.2.1
 
 - 최신 VS Code의 status bar DOM 변경으로 고양이가 주입되지 않던 문제 수정 (셀렉터 fallback 추가).
