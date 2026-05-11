@@ -2,7 +2,7 @@
     "name": "cat-pet-statusbar",
     "displayName": "BlobCat - Status Bar Pet 🐱",
     "description": "Cute animated blobcat pet in your VS Code status bar",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "publisher": "blobcat",
 
     "icon": "media/icon.png",
