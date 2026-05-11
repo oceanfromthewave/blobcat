@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1
+
+- Removed stray `clean_vscode.js` (a stale developer utility) that was shipping inside the vsix and contained a hardcoded local path. The legacy `.desktop.main.js` cleanup is already handled inside the extension at activation, so no replacement is needed.
+- Hardened `.vscodeignore` so similar local-only utilities won't get packaged in the future.
+
 ## 2.0.0
 
 - **Injection target changed**: Previously patched `out/vs/workbench/workbench.desktop.main.js` (a minified bundle) via regex splicing. From this version on, the extension inserts a `<script>` tag into `out/vs/code/electron-browser/workbench/workbench.html` instead.

@@ -4,3 +4,7 @@ src/**
 node_modules/**
 .gitignore
 tsconfig.json
+clean_vscode.js
+*.local.js
+.claude/**
+CLAUDE.md
