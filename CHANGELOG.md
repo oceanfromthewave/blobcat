@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0
+
+- **Injection target changed**: Previously patched `out/vs/workbench/workbench.desktop.main.js` (a minified bundle) via regex splicing. From this version on, the extension inserts a `<script>` tag into `out/vs/code/electron-browser/workbench/workbench.html` instead.
+  - More stable: minified bundle patches broke on every VS Code update; HTML injection survives across updates.
+  - Cleaner backup/restore: the original `workbench.html` is preserved as `workbench.html.cat-backup`.
+  - On first launch, any leftover `.desktop.main.js` patches from earlier versions are cleaned up automatically.
+- Adapts to VS Code's newer directory layout (`electron-sandbox` → `electron-browser`).
+- Visuals and animations are unchanged from 1.x (multi-color cat, tail wag, jump, particles, blinking).
+
 ## 1.2.2
 
 - **중요 버그 수정**: 1.1.0~1.2.1의 `deactivate()`가 normal VS Code 종료 시점에도 디스크 패치를 제거하던 문제. 이로 인해 다음 세션에서 워크벤치 메모리에 패치가 로드되지 않아 고양이가 영영 보이지 않는 회귀가 있었음. 이번 버전부터 `deactivate()`는 아무것도 하지 않음.
