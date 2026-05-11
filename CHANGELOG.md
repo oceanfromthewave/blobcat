@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+- Updated the marketplace icon to match the current cat design (now includes the tail).
+
 ## 2.0.1
 
 - Removed stray `clean_vscode.js` (a stale developer utility) that was shipping inside the vsix and contained a hardcoded local path. The legacy `.desktop.main.js` cleanup is already handled inside the extension at activation, so no replacement is needed.
