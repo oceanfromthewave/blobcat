@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.5
+
+- Fix: the `blobcat.*` configuration block was at the top level of `package.json` instead of inside `contributes`, so the four settings never showed up in VS Code's Settings UI. Moved it under `contributes.configuration`. Editing `settings.json` directly already worked in 2.0.4.
+
 ## 2.0.4
 
 - The `blobcat.*` settings declared in `package.json` are now wired up:
