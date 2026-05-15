@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.4
+
+- The `blobcat.*` settings declared in `package.json` are now wired up:
+  - `blobcat.enableSleep` — cat closes its eyes after 30 seconds of inactivity.
+  - `blobcat.enableParticles` — toggle the pink particles that pop on keystroke.
+  - `blobcat.catScale` — resize the cat (`0.5` – `3`, default `1`).
+  - `blobcat.catOpacity` — fade the cat (`0.1` – `1`, default `1`).
+- Changing any of these rewrites `workbench.html`; a VS Code restart is required for the new values to take effect.
+
+## 2.0.3
+
+- Added a small white highlight to each eye so the cat looks a bit more alive.
+
 ## 2.0.2
 
 - Updated the marketplace icon to match the current cat design (now includes the tail).

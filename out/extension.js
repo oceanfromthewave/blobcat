@@ -46,9 +46,26 @@ function activate(context) {
         }
     }));
     context.subscriptions.push(vscode.commands.registerCommand('cat-pet.install', () => install(context, false)), vscode.commands.registerCommand('cat-pet.uninstall', () => uninstall()));
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async (e) => {
+        if (!e.affectsConfiguration('blobcat'))
+            return;
+        const changed = await install(context, true);
+        if (changed) {
+            vscode.window.showInformationMessage('BlobCat 설정이 갱신되었습니다. VS Code를 재시작하면 적용됩니다.');
+        }
+    }));
     install(context, true);
 }
 exports.activate = activate;
+function readConfig() {
+    const cfg = vscode.workspace.getConfiguration('blobcat');
+    return {
+        enableSleep: cfg.get('enableSleep', true),
+        enableParticles: cfg.get('enableParticles', true),
+        catScale: cfg.get('catScale', 1),
+        catOpacity: cfg.get('catOpacity', 1),
+    };
+}
 function deactivate() { }
 exports.deactivate = deactivate;
 function findWorkbenchHtml() {
@@ -66,7 +83,7 @@ async function install(context, silent) {
     if (!htmlPath) {
         if (!silent)
             vscode.window.showErrorMessage('workbench.html을 찾지 못했습니다.');
-        return;
+        return false;
     }
     try {
         const backupPath = htmlPath + '.cat-backup';
@@ -78,18 +95,21 @@ async function install(context, silent) {
         let html = fs.readFileSync(backupPath, 'utf-8');
         const catJsPath = path.join(context.extensionPath, 'media', 'cat.js');
         const catJs = fs.readFileSync(catJsPath, 'utf-8');
+        const configJson = JSON.stringify(readConfig());
         html = relaxCsp(html);
-        const injection = `\n${MARKER_START}\n<script>\n${catJs}\n</script>\n${MARKER_END}\n`;
+        const injection = `\n${MARKER_START}\n<script>window.__BLOBCAT_CONFIG = ${configJson};</script>\n<script>\n${catJs}\n</script>\n${MARKER_END}\n`;
         html = html.replace('</body>', `${injection}</body>`);
-        if (silent && fs.readFileSync(htmlPath, 'utf-8') === html)
-            return;
+        if (fs.readFileSync(htmlPath, 'utf-8') === html)
+            return false;
         fs.writeFileSync(htmlPath, html);
         if (!silent)
             vscode.window.showInformationMessage('고양이 설치 완료. VS Code를 재시작하세요.');
+        return true;
     }
     catch (err) {
         if (!silent)
             vscode.window.showErrorMessage('설치 실패: ' + err.message);
+        return false;
     }
 }
 async function uninstall() {

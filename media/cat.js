@@ -1,4 +1,13 @@
 (function() {
+    const CONFIG = Object.assign({
+        enableSleep: true,
+        enableParticles: true,
+        catScale: 1,
+        catOpacity: 1
+    }, window.__BLOBCAT_CONFIG || {});
+
+    const SLEEP_AFTER_MS = 30000;
+
     function createSVG(tag, attrs) {
         const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
         if (attrs) for (const k in attrs) el.setAttribute(k, attrs[k]);
@@ -23,10 +32,12 @@
                 position: relative;
                 display: flex; align-items: center;
                 padding: 0 10px; height: 100%;
+                opacity: var(--cat-opacity, 1);
             }
 
             #cat-pet-svg {
-                height: 26px; width: 26px;
+                height: calc(26px * var(--cat-scale, 1));
+                width: calc(26px * var(--cat-scale, 1));
                 transform-origin: center bottom;
                 transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
                 overflow: visible;
@@ -76,6 +87,14 @@
 
             #cat-pet-svg.is-jumping .cat-eye {
                 transform: scaleY(0.18);
+            }
+
+            #cat-pet-svg.is-sleeping .cat-eye {
+                transform: scaleY(0.08);
+                transition: transform 0.4s ease;
+            }
+            #cat-pet-svg.is-sleeping #cat-pet-tail {
+                animation-duration: 3.4s;
             }
 
             .cat-mouth-jump { display: none; }
@@ -140,7 +159,7 @@
         function next() {
             const wait = 3500 + Math.random() * 3500;
             setTimeout(() => {
-                if (!svg.classList.contains('is-jumping')) {
+                if (!svg.classList.contains('is-jumping') && !svg.classList.contains('is-sleeping')) {
                     const eyes = svg.querySelectorAll('.cat-eye');
                     eyes.forEach(e => {
                         e.classList.remove('is-blinking');
@@ -175,6 +194,8 @@
 
         const container = document.createElement('div');
         container.id = 'cat-pet-container';
+        container.style.setProperty('--cat-scale', String(CONFIG.catScale));
+        container.style.setProperty('--cat-opacity', String(CONFIG.catOpacity));
 
         const svg = createSVG('svg', { viewBox: '0 0 100 100' });
         svg.id = 'cat-pet-svg';
@@ -220,13 +241,26 @@
 
         if (!statusbar) return;
 
+        let sleepTimer = null;
+        function scheduleSleep() {
+            if (!CONFIG.enableSleep) return;
+            clearTimeout(sleepTimer);
+            sleepTimer = setTimeout(() => svg.classList.add('is-sleeping'), SLEEP_AFTER_MS);
+        }
+        scheduleSleep();
+
         const observer = new MutationObserver(() => {
             const sig = document.querySelector('[id*="cat-pet-signal"]');
             const isTyping = sig && (sig.textContent || '').includes('TYPING');
-            if (!isTyping || svg.classList.contains('is-jumping')) return;
+            if (!isTyping) return;
+
+            svg.classList.remove('is-sleeping');
+            scheduleSleep();
+
+            if (svg.classList.contains('is-jumping')) return;
 
             svg.classList.add('is-jumping');
-            spawnParticles(container);
+            if (CONFIG.enableParticles) spawnParticles(container);
 
             const onEnd = (e) => {
                 if (e.animationName !== 'cat-jump') return;

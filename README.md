@@ -16,7 +16,19 @@ As a result, VS Code may show this notification once on startup:
 
 - After installing the extension, restart VS Code. The cat appears on the left side of the status bar.
 - Typing makes the cat jump with little pink particles.
+- After 30 seconds of inactivity, the cat dozes off (eyes closed, slower tail).
 - Hovering tilts the cat and brightens its cheeks.
+
+## Settings
+
+| Setting | Default | Description |
+|---|---|---|
+| `blobcat.enableSleep` | `true` | Close the cat's eyes after 30 seconds of inactivity. |
+| `blobcat.enableParticles` | `true` | Spawn pink particles when the cat jumps on keystroke. |
+| `blobcat.catScale` | `1` | Size multiplier for the cat (`0.5` – `3`). |
+| `blobcat.catOpacity` | `1` | Opacity of the cat (`0.1` – `1`). |
+
+Changing a setting rewrites VS Code's `workbench.html`; restart VS Code for the new values to take effect.
 
 ## How to Remove
 
