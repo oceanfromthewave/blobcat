@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.6
+
+- **New**: Click the cat to pet it — it does a happy wiggle and spawns little hearts. Toggle with `blobcat.enablePetting` (default `true`).
+- **New**: `blobcat.catColor` — recolor the cat's body and tail with any CSS color string (default `#FFFFFF`). Pairs nicely with custom themes.
+
 ## 2.0.5
 
 - Fix: the `blobcat.*` configuration block was at the top level of `package.json` instead of inside `contributes`, so the four settings never showed up in VS Code's Settings UI. Moved it under `contributes.configuration`. Editing `settings.json` directly already worked in 2.0.4.

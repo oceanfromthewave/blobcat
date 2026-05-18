@@ -62,8 +62,10 @@ function readConfig() {
     return {
         enableSleep: cfg.get('enableSleep', true),
         enableParticles: cfg.get('enableParticles', true),
+        enablePetting: cfg.get('enablePetting', true),
         catScale: cfg.get('catScale', 1),
         catOpacity: cfg.get('catOpacity', 1),
+        catColor: cfg.get('catColor', '#FFFFFF'),
     };
 }
 function deactivate() { }

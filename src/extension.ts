@@ -45,8 +45,10 @@ function readConfig() {
     return {
         enableSleep: cfg.get<boolean>('enableSleep', true),
         enableParticles: cfg.get<boolean>('enableParticles', true),
+        enablePetting: cfg.get<boolean>('enablePetting', true),
         catScale: cfg.get<number>('catScale', 1),
         catOpacity: cfg.get<number>('catOpacity', 1),
+        catColor: cfg.get<string>('catColor', '#FFFFFF'),
     };
 }
 

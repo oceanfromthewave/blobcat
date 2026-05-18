@@ -2,8 +2,10 @@
     const CONFIG = Object.assign({
         enableSleep: true,
         enableParticles: true,
+        enablePetting: true,
         catScale: 1,
-        catOpacity: 1
+        catOpacity: 1,
+        catColor: '#FFFFFF'
     }, window.__BLOBCAT_CONFIG || {});
 
     const SLEEP_AFTER_MS = 30000;
@@ -41,6 +43,8 @@
                 transform-origin: center bottom;
                 transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
                 overflow: visible;
+                color: var(--cat-color, #FFFFFF);
+                cursor: var(--cat-cursor, default);
             }
 
             #cat-pet-svg > g.cat-body {
@@ -133,6 +137,39 @@
                 60%  { opacity: 0.9; }
                 100% { transform: translate(var(--dx), var(--dy)) scale(0.1); opacity: 0; }
             }
+
+            @keyframes cat-pet-wiggle {
+                0%   { transform: rotate(0deg)   scale(1); }
+                20%  { transform: rotate(-10deg) scale(1.08); }
+                45%  { transform: rotate(9deg)   scale(1.08); }
+                70%  { transform: rotate(-6deg)  scale(1.05); }
+                100% { transform: rotate(0deg)   scale(1); }
+            }
+
+            #cat-pet-svg.is-petting {
+                animation: cat-pet-wiggle 0.7s cubic-bezier(0.34, 1.36, 0.64, 1) forwards;
+                transition: none;
+            }
+            #cat-pet-svg.is-petting .cat-cheek { fill: #FF6F8A; }
+            #cat-pet-svg.is-petting .cat-eye { transform: scaleY(0.12); }
+
+            .cat-heart {
+                position: absolute;
+                width: 10px; height: 10px;
+                pointer-events: none;
+                bottom: 14px; left: 50%;
+                margin-left: -5px;
+                background: #FF4D6D;
+                clip-path: path('M5 9 Q0 5.5 0 2.8 Q0 0 2.5 0 Q4 0 5 1.6 Q6 0 7.5 0 Q10 0 10 2.8 Q10 5.5 5 9 Z');
+                opacity: 0;
+                animation: cat-heart-float 0.8s ease-out forwards;
+            }
+
+            @keyframes cat-heart-float {
+                0%   { transform: translate(0, 0) scale(0.4); opacity: 0; }
+                25%  { opacity: 1; }
+                100% { transform: translate(var(--dx), var(--dy)) scale(0.6); opacity: 0; }
+            }
         `;
         document.head.appendChild(style);
     }
@@ -152,6 +189,23 @@
             p.style.animationDelay = (i * 20) + 'ms';
             container.appendChild(p);
             setTimeout(() => p.remove(), 700);
+        });
+    }
+
+    function spawnHearts(container) {
+        const offsets = [
+            { dx: '-14px', dy: '-22px' },
+            { dx: '0px',   dy: '-28px' },
+            { dx: '14px',  dy: '-22px' }
+        ];
+        offsets.forEach((o, i) => {
+            const h = document.createElement('div');
+            h.className = 'cat-heart';
+            h.style.setProperty('--dx', o.dx);
+            h.style.setProperty('--dy', o.dy);
+            h.style.animationDelay = (i * 60) + 'ms';
+            container.appendChild(h);
+            setTimeout(() => h.remove(), 950);
         });
     }
 
@@ -196,6 +250,8 @@
         container.id = 'cat-pet-container';
         container.style.setProperty('--cat-scale', String(CONFIG.catScale));
         container.style.setProperty('--cat-opacity', String(CONFIG.catOpacity));
+        container.style.setProperty('--cat-color', String(CONFIG.catColor));
+        if (CONFIG.enablePetting) container.style.setProperty('--cat-cursor', 'pointer');
 
         const svg = createSVG('svg', { viewBox: '0 0 100 100' });
         svg.id = 'cat-pet-svg';
@@ -203,7 +259,7 @@
         const tail = createSVG('path', {
             d: 'M 78 75 Q 92 68 90 52',
             fill: 'none',
-            stroke: '#FFFFFF',
+            stroke: 'currentColor',
             'stroke-width': '6',
             'stroke-linecap': 'round'
         });
@@ -215,10 +271,10 @@
         body.appendChild(tail);
 
         const shapes = [
-            {t:'path', a:{d:'M20 80 Q20 40 50 40 Q80 40 80 80 Z', fill:'#FFFFFF', stroke:'#E0E0E0', 'stroke-width':'2'}},
-            {t:'path', a:{d:'M34 41 Q30 30 40 38 Z', fill:'#FFFFFF', stroke:'#E0E0E0'}},
+            {t:'path', a:{d:'M20 80 Q20 40 50 40 Q80 40 80 80 Z', fill:'currentColor', stroke:'#E0E0E0', 'stroke-width':'2'}},
+            {t:'path', a:{d:'M34 41 Q30 30 40 38 Z', fill:'currentColor', stroke:'#E0E0E0'}},
             {t:'path', a:{d:'M35 39 Q32 33 38 37 Z', fill:'#FFD1DC'}},
-            {t:'path', a:{d:'M66 41 Q70 30 60 38 Z', fill:'#FFFFFF', stroke:'#E0E0E0'}},
+            {t:'path', a:{d:'M66 41 Q70 30 60 38 Z', fill:'currentColor', stroke:'#E0E0E0'}},
             {t:'path', a:{d:'M65 39 Q68 33 62 37 Z', fill:'#FFD1DC'}},
             {t:'circle', a:{cx:'40', cy:'55', r:'4', fill:'#333333', class:'cat-eye'}},
             {t:'circle', a:{cx:'38.8', cy:'53.8', r:'1.2', fill:'#FFFFFF'}},
@@ -239,14 +295,31 @@
         startBreathLoop(svg);
         startBlinkLoop(svg);
 
-        if (!statusbar) return;
-
         let sleepTimer = null;
         function scheduleSleep() {
             if (!CONFIG.enableSleep) return;
             clearTimeout(sleepTimer);
             sleepTimer = setTimeout(() => svg.classList.add('is-sleeping'), SLEEP_AFTER_MS);
         }
+
+        if (CONFIG.enablePetting) {
+            container.addEventListener('click', () => {
+                svg.classList.remove('is-sleeping');
+                scheduleSleep();
+                if (svg.classList.contains('is-petting') || svg.classList.contains('is-jumping')) return;
+                svg.classList.add('is-petting');
+                spawnHearts(container);
+                const onEnd = (e) => {
+                    if (e.animationName !== 'cat-pet-wiggle') return;
+                    svg.classList.remove('is-petting');
+                    svg.removeEventListener('animationend', onEnd);
+                };
+                svg.addEventListener('animationend', onEnd);
+            });
+        }
+
+        if (!statusbar) return;
+
         scheduleSleep();
 
         const observer = new MutationObserver(() => {

@@ -2,7 +2,7 @@
     "name": "cat-pet-statusbar",
     "displayName": "BlobCat - Status Bar Pet 🐱",
     "description": "Cute animated blobcat pet in your VS Code status bar",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "publisher": "blobcat",
 
     "icon": "media/icon.png",
@@ -70,6 +70,16 @@
                     "minimum": 0.1,
                     "maximum": 1,
                     "description": "Opacity of the cat (0.1 – 1)."
+                },
+                "blobcat.catColor": {
+                    "type": "string",
+                    "default": "#FFFFFF",
+                    "description": "Body color of the cat (CSS color string, e.g. '#FFFFFF', 'orange', '#FFB6A3')."
+                },
+                "blobcat.enablePetting": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Click the cat to pet it — triggers a happy wiggle and spawns hearts."
                 }
             }
         }
