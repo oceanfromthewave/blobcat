@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.7
+
+- Fix: when the startup patch of `workbench.html` failed, it failed silently — most often a permission error when VS Code is installed in a protected location — so the cat simply never appeared with no explanation. The extension now shows a warning with the failure reason and a one-click **retry** action.
+- The README now has an **Installation** section, including what to do when the cat doesn't show up (`Cat Pet: Install Status Bar Pet` from the Command Palette).
+
 ## 2.0.6
 
 - **New**: Click the cat to pet it — it does a happy wiggle and spawns little hearts. Toggle with `blobcat.enablePetting` (default `true`).

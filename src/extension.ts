@@ -6,6 +6,12 @@ const MARKER_START = '<!-- CAT_PET_INJECT_START -->';
 const MARKER_END = '<!-- CAT_PET_INJECT_END -->';
 const LEGACY_CLEANUP_KEY = 'cat-pet.legacyDesktopMainCleaned';
 
+type InstallResult =
+    | { status: 'installed' }
+    | { status: 'unchanged' }
+    | { status: 'workbench-not-found' }
+    | { status: 'error'; message: string };
+
 export function activate(context: vscode.ExtensionContext) {
     if (!context.globalState.get(LEGACY_CLEANUP_KEY)) {
         cleanLegacyDesktopMainPatch();
@@ -31,13 +37,32 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async e => {
         if (!e.affectsConfiguration('blobcat')) return;
-        const changed = await install(context, true);
-        if (changed) {
-            vscode.window.showInformationMessage('BlobCat 설정이 갱신되었습니다. VS Code를 재시작하면 적용됩니다.');
+        const result = await install(context, true);
+        if (result.status === 'installed') {
+            vscode.window.showInformationMessage('BlobCat settings updated. Restart VS Code to apply them.');
         }
     }));
 
-    install(context, true);
+    void runStartupInstall(context);
+}
+
+async function runStartupInstall(context: vscode.ExtensionContext): Promise<void> {
+    const result = await install(context, true);
+    if (result.status === 'installed' || result.status === 'unchanged') return;
+
+    const reason = result.status === 'workbench-not-found'
+        ? "Couldn't find VS Code's workbench.html."
+        : `Couldn't modify workbench.html (${result.message}).`;
+
+    const retry = 'Retry install';
+    const choice = await vscode.window.showWarningMessage(
+        `BlobCat: couldn't install the cat automatically. ${reason} ` +
+        'If VS Code is installed in a protected location (e.g. Program Files), run it as administrator and try again.',
+        retry
+    );
+    if (choice === retry) {
+        await install(context, false);
+    }
 }
 
 function readConfig() {
@@ -65,11 +90,11 @@ function findWorkbenchHtml(): string | null {
     return candidates.find(p => fs.existsSync(p)) ?? null;
 }
 
-async function install(context: vscode.ExtensionContext, silent: boolean): Promise<boolean> {
+async function install(context: vscode.ExtensionContext, silent: boolean): Promise<InstallResult> {
     const htmlPath = findWorkbenchHtml();
     if (!htmlPath) {
-        if (!silent) vscode.window.showErrorMessage('workbench.html을 찾지 못했습니다.');
-        return false;
+        if (!silent) vscode.window.showErrorMessage("Couldn't find workbench.html.");
+        return { status: 'workbench-not-found' };
     }
 
     try {
@@ -92,21 +117,21 @@ async function install(context: vscode.ExtensionContext, silent: boolean): Promi
         const injection = `\n${MARKER_START}\n<script>window.__BLOBCAT_CONFIG = ${configJson};</script>\n<script>\n${catJs}\n</script>\n${MARKER_END}\n`;
         html = html.replace('</body>', `${injection}</body>`);
 
-        if (fs.readFileSync(htmlPath, 'utf-8') === html) return false;
+        if (fs.readFileSync(htmlPath, 'utf-8') === html) return { status: 'unchanged' };
 
         fs.writeFileSync(htmlPath, html);
-        if (!silent) vscode.window.showInformationMessage('고양이 설치 완료. VS Code를 재시작하세요.');
-        return true;
+        if (!silent) vscode.window.showInformationMessage('Cat installed — please restart VS Code.');
+        return { status: 'installed' };
     } catch (err: any) {
-        if (!silent) vscode.window.showErrorMessage('설치 실패: ' + err.message);
-        return false;
+        if (!silent) vscode.window.showErrorMessage('Install failed: ' + err.message);
+        return { status: 'error', message: err?.message ?? String(err) };
     }
 }
 
 async function uninstall() {
     const htmlPath = findWorkbenchHtml();
     if (!htmlPath) {
-        vscode.window.showErrorMessage('workbench.html을 찾지 못했습니다.');
+        vscode.window.showErrorMessage("Couldn't find workbench.html.");
         return;
     }
 
@@ -120,9 +145,9 @@ async function uninstall() {
             html = html.replace(re, '');
             fs.writeFileSync(htmlPath, html);
         }
-        vscode.window.showInformationMessage('고양이 제거 완료. VS Code를 재시작하세요.');
+        vscode.window.showInformationMessage('Cat removed — please restart VS Code.');
     } catch (err: any) {
-        vscode.window.showErrorMessage('제거 실패: ' + err.message);
+        vscode.window.showErrorMessage('Uninstall failed: ' + err.message);
     }
 }
 

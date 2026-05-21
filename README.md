@@ -2,6 +2,24 @@
 
 just blobcat in your status bar 🐱
 
+## Installation
+
+1. Install **BlobCat** from the VS Code Marketplace (or run `ext install blobcat.cat-pet-statusbar` from the Command Palette).
+2. **Fully restart VS Code** — quit every window and reopen it. The cat then appears on the **left side of the status bar**.
+
+> A window *reload* is not enough. The cat is injected into VS Code's `workbench.html`, which is only read at startup.
+
+### The cat didn't show up?
+
+The extension patches `workbench.html` automatically on startup, but that can fail silently — most often when VS Code is installed in a protected location (e.g. `C:\Program Files\`). To run the patch manually and see any error:
+
+1. Open the Command Palette — `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS).
+2. Run **`Cat Pet: Install Status Bar Pet`**.
+3. It reports success, or shows the reason it failed.
+4. Restart VS Code.
+
+If it reports a permission error, start VS Code once as administrator, run the command again, then restart normally.
+
 ## ⚠️ After Installation
 
 To render the cat in the status bar, this extension injects a `<script>` tag into VS Code's `workbench.html`.
@@ -14,7 +32,6 @@ As a result, VS Code may show this notification once on startup:
 
 ## Usage
 
-- After installing the extension, restart VS Code. The cat appears on the left side of the status bar.
 - Typing makes the cat jump with little pink particles.
 - **Clicking the cat pets it** — it does a happy wiggle and spawns floating hearts.
 - After 30 seconds of inactivity, the cat dozes off (eyes closed, slower tail).
