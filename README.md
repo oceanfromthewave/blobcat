@@ -1,9 +1,6 @@
 <div align="center">
 
-<!-- TODO(growth): replace media/icon.png below with an animated demo GIF (docs/hero.gif).
-     Record a ~4s clip of the cat jumping as you type + a click-to-pet (hearts).
-     A real GIF here is the single biggest install-rate lever for a visual extension. -->
-<img src="media/icon.png" alt="BlobCat" width="160" />
+<img src="docs/hero.png" alt="BlobCat — a tiny cat that lives in your VS Code status bar and reacts as you type" width="820" />
 
 # BlobCat 🐱
 

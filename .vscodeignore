@@ -10,6 +10,7 @@ clean_vscode.js
 CLAUDE.md
 .github/**
 docs/**
+scripts/**
 CONTRIBUTING.md
 record.md
 *.vsix

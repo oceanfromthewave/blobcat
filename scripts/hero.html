@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 440px; }
+  body {
+    background: radial-gradient(1200px 600px at 50% -10%, #20232b 0%, #141518 60%, #101113 100%);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color: #e8e8ea;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { padding: 30px 44px 26px; height: 100%; display: flex; flex-direction: column; }
+
+  /* header */
+  .head { display: flex; align-items: center; gap: 18px; }
+  .head .cat-hero { width: 78px; height: 78px; flex: 0 0 auto; filter: drop-shadow(0 4px 10px rgba(0,0,0,.45)); }
+  .title { font-size: 46px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+  .title .em { font-size: 40px; }
+  .tag { margin-top: 8px; font-size: 18px; color: #a9adb6; font-weight: 500; }
+  .tag b { color: #ff9fb3; font-weight: 700; }
+
+  /* chips */
+  .chips { display: flex; gap: 12px; margin-top: 20px; }
+  .chip {
+    display: flex; align-items: center; gap: 8px;
+    background: #1d1f25; border: 1px solid #2c2f37; border-radius: 999px;
+    padding: 9px 16px; font-size: 15px; color: #d4d7de; font-weight: 600;
+  }
+  .chip .e { font-size: 17px; }
+
+  /* status bar mock */
+  .statusbar {
+    height: 32px; margin-top: 52px; background: #007acc; border-radius: 6px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 4px 0 2px; color: #fff; font-size: 12.5px; box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    position: relative;
+  }
+  .sb-left, .sb-right { display: flex; align-items: center; }
+  .sb-left .seg, .sb-right .seg { padding: 0 9px; display: flex; align-items: center; gap: 5px; height: 30px; }
+  .sb-cat { width: 30px; height: 30px; padding: 0 2px 0 6px; display: flex; align-items: flex-end; }
+  .sb-cat svg { width: 26px; height: 26px; }
+  .callout {
+    position: absolute; left: 44px; top: -30px;
+    background: #ff5277; color: #fff; font-size: 12px; font-weight: 700;
+    padding: 4px 10px; border-radius: 7px; white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0,0,0,.3);
+  }
+  .callout::after {
+    content: ""; position: absolute; left: 16px; bottom: -5px;
+    border: 6px solid transparent; border-top-color: #ff5277; border-bottom: 0;
+  }
+
+  /* color row */
+  .colors { margin-top: 22px; display: flex; align-items: center; gap: 22px; }
+  .colors .lead { font-size: 15px; color: #a9adb6; font-weight: 600; }
+  .colors .lead b { color: #fff; }
+  .swatch { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .swatch svg { width: 44px; height: 44px; }
+  .swatch span { font-size: 11px; color: #7d828c; font-family: "Cascadia Code", Consolas, monospace; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <span class="cat-hero" id="heroCat"></span>
+      <div>
+        <div class="title">BlobCat <span class="em">🐱</span></div>
+        <div class="tag">A tiny cat that lives in your VS&nbsp;Code status bar — and <b>jumps when you type</b>.</div>
+      </div>
+    </div>
+
+    <div class="chips">
+      <div class="chip"><span class="e">⌨️</span> Reacts to your typing</div>
+      <div class="chip"><span class="e">🫶</span> Click to pet it</div>
+      <div class="chip"><span class="e">😴</span> Dozes off when idle</div>
+      <div class="chip"><span class="e">🪶</span> Zero screen space</div>
+    </div>
+
+    <div class="statusbar">
+      <div class="callout">it lives right here — tap me → 🫶</div>
+      <div class="sb-left">
+        <span class="sb-cat" id="barCat"></span>
+        <span class="seg">⎇ main</span>
+        <span class="seg">✓ 0&nbsp;&nbsp;⚠ 0</span>
+      </div>
+      <div class="sb-right">
+        <span class="seg">Ln 12, Col 8</span>
+        <span class="seg">UTF-8</span>
+        <span class="seg">TypeScript</span>
+        <span class="seg">🔔</span>
+      </div>
+    </div>
+
+    <div class="colors">
+      <span class="lead"><b>Recolor it</b> to match any theme — <code style="color:#9cdcfe;font-family:monospace">blobcat.catColor</code></span>
+      <div id="swatches" style="display:flex; gap:18px;"></div>
+    </div>
+  </div>
+
+<script>
+function catSVG(color, eye) {
+  eye = eye || '#333333';
+  return `
+  <svg viewBox="0 0 100 100" style="color:${color}; overflow:visible;">
+    <path d="M 78 75 Q 92 68 90 52" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+    <path d="M20 80 Q20 40 50 40 Q80 40 80 80 Z" fill="currentColor" stroke="#E0E0E0" stroke-width="2"/>
+    <path d="M34 41 Q30 30 40 38 Z" fill="currentColor" stroke="#E0E0E0"/>
+    <path d="M35 39 Q32 33 38 37 Z" fill="#FFD1DC"/>
+    <path d="M66 41 Q70 30 60 38 Z" fill="currentColor" stroke="#E0E0E0"/>
+    <path d="M65 39 Q68 33 62 37 Z" fill="#FFD1DC"/>
+    <circle cx="40" cy="55" r="4" fill="${eye}"/>
+    <circle cx="38.8" cy="53.8" r="1.2" fill="#FFFFFF"/>
+    <circle cx="60" cy="55" r="4" fill="${eye}"/>
+    <circle cx="58.8" cy="53.8" r="1.2" fill="#FFFFFF"/>
+    <circle cx="32" cy="62" r="5" fill="#FFD1DC"/>
+    <circle cx="68" cy="62" r="5" fill="#FFD1DC"/>
+    <path d="M45 65 Q50 70 55 65" fill="none" stroke="${eye}" stroke-width="2"/>
+  </svg>`;
+}
+document.getElementById('heroCat').innerHTML = catSVG('#FFFFFF');
+document.getElementById('barCat').innerHTML = catSVG('#FFFFFF');
+const palette = [
+  ['#FFFFFF', 'white'],
+  ['#FFB6A3', 'peach'],
+  ['#FFC0CB', 'pink'],
+  ['#A8E6CF', 'mint'],
+  ['#B5A8FF', 'lilac']
+];
+document.getElementById('swatches').innerHTML = palette.map(p =>
+  `<div class="swatch">${catSVG(p[0])}<span>${p[1]}</span></div>`
+).join('');
+</script>
+</body>
+</html>

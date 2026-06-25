@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.9
+
+- Added a hero banner to the README (Marketplace listing) showing the cat in a status-bar mockup, its typing/petting/sleep reactions, and the `blobcat.catColor` palette — so you can see what you're getting at a glance.
+
 ## 2.0.8
 
 - **Marketplace listing refresh**: clearer title, description, and search keywords so the cat is easier to find when searching for "cat", "pet", or "status bar".
