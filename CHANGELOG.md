@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0
+
+- **New**: `blobcat.catPreset` — pick a ready-made cat color from a dropdown (white, peach, pink, mint, lilac, orange, gray) without hunting for a hex code. Set it to `custom` to keep using your own `blobcat.catColor`.
+
 ## 2.0.9
 
 - Added a hero banner to the README (Marketplace listing) showing the cat in a status-bar mockup, its typing/petting/sleep reactions, and the `blobcat.catColor` palette — so you can see what you're getting at a glance.

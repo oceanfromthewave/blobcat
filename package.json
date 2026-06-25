@@ -2,7 +2,7 @@
     "name": "cat-pet-statusbar",
     "displayName": "BlobCat — Cute Cat Pet in Your Status Bar 🐱",
     "description": "A cute animated cat that lives in your VS Code status bar and reacts as you type — pet it for hearts, recolor it, and watch it doze off when you idle. A tiny, low-distraction coding companion.",
-    "version": "2.0.9",
+    "version": "2.1.0",
     "publisher": "blobcat",
 
     "icon": "media/icon.png",
@@ -82,10 +82,35 @@
                     "maximum": 1,
                     "description": "Opacity of the cat (0.1 – 1)."
                 },
+                "blobcat.catPreset": {
+                    "type": "string",
+                    "enum": [
+                        "custom",
+                        "white",
+                        "peach",
+                        "pink",
+                        "mint",
+                        "lilac",
+                        "orange",
+                        "gray"
+                    ],
+                    "enumDescriptions": [
+                        "Use the custom color set in blobcat.catColor",
+                        "Classic white (#FFFFFF)",
+                        "Peach (#FFB6A3)",
+                        "Pink (#FFC0CB)",
+                        "Mint (#A8E6CF)",
+                        "Lilac (#B5A8FF)",
+                        "Orange (#FFA94D)",
+                        "Gray (#C7CBD1)"
+                    ],
+                    "default": "custom",
+                    "description": "Pick a ready-made cat color. Choose 'custom' to use blobcat.catColor instead."
+                },
                 "blobcat.catColor": {
                     "type": "string",
                     "default": "#FFFFFF",
-                    "description": "Body color of the cat (CSS color string, e.g. '#FFFFFF', 'orange', '#FFB6A3')."
+                    "description": "Custom body/tail color (any CSS color, e.g. '#FFFFFF', 'orange', '#FFB6A3'). Only used when blobcat.catPreset is 'custom'."
                 },
                 "blobcat.enablePetting": {
                     "type": "boolean",

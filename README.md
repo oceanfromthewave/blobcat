@@ -65,7 +65,8 @@ All settings live under `blobcat.*` (Settings UI → search “BlobCat”). Chan
 | `blobcat.enableSleep` | `true` | Close the cat's eyes after 30 seconds of inactivity. |
 | `blobcat.enableParticles` | `true` | Pink particles when the cat jumps on a keystroke. |
 | `blobcat.enablePetting` | `true` | Click the cat to pet it — wiggle + heart particles. |
-| `blobcat.catColor` | `#FFFFFF` | Body/tail color — any CSS color, e.g. `orange`, `#FFB6A3`. |
+| `blobcat.catPreset` | `custom` | Pick a ready-made color: `white`, `peach`, `pink`, `mint`, `lilac`, `orange`, `gray`. Use `custom` to fall back to `catColor`. |
+| `blobcat.catColor` | `#FFFFFF` | Custom body/tail color — any CSS color, e.g. `orange`, `#FFB6A3`. Used only when `catPreset` is `custom`. |
 | `blobcat.catScale` | `1` | Size multiplier (`0.5`–`3`). |
 | `blobcat.catOpacity` | `1` | Opacity (`0.1`–`1`). |
 

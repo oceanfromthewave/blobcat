@@ -65,15 +65,28 @@ async function runStartupInstall(context: vscode.ExtensionContext): Promise<void
     }
 }
 
+const PRESET_COLORS: Record<string, string> = {
+    white: '#FFFFFF',
+    peach: '#FFB6A3',
+    pink: '#FFC0CB',
+    mint: '#A8E6CF',
+    lilac: '#B5A8FF',
+    orange: '#FFA94D',
+    gray: '#C7CBD1',
+};
+
 function readConfig() {
     const cfg = vscode.workspace.getConfiguration('blobcat');
+    const preset = cfg.get<string>('catPreset', 'custom');
+    const customColor = cfg.get<string>('catColor', '#FFFFFF');
+    const catColor = PRESET_COLORS[preset] ?? customColor;
     return {
         enableSleep: cfg.get<boolean>('enableSleep', true),
         enableParticles: cfg.get<boolean>('enableParticles', true),
         enablePetting: cfg.get<boolean>('enablePetting', true),
         catScale: cfg.get<number>('catScale', 1),
         catOpacity: cfg.get<number>('catOpacity', 1),
-        catColor: cfg.get<string>('catColor', '#FFFFFF'),
+        catColor,
     };
 }
 
