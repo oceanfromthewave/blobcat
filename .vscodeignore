@@ -8,3 +8,8 @@ clean_vscode.js
 *.local.js
 .claude/**
 CLAUDE.md
+.github/**
+docs/**
+CONTRIBUTING.md
+record.md
+*.vsix

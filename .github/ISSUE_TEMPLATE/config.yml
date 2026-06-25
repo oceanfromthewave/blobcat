@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ⭐ Leave a Marketplace review
+    url: https://marketplace.visualstudio.com/items?itemName=blobcat.cat-pet-statusbar&ssr=false#review-details
+    about: Love the cat? A quick review helps other people find it.
+  - name: 🎬 Help with a demo GIF
+    url: https://github.com/oceanfromthewave/blobcat/blob/main/CONTRIBUTING.md
+    about: A good README GIF is the most valuable contribution you can make.

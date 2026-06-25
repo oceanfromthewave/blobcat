@@ -1,11 +1,16 @@
 {
     "name": "cat-pet-statusbar",
-    "displayName": "BlobCat - Status Bar Pet 🐱",
-    "description": "Cute animated blobcat pet in your VS Code status bar",
-    "version": "2.0.7",
+    "displayName": "BlobCat — Cute Cat Pet in Your Status Bar 🐱",
+    "description": "A cute animated cat that lives in your VS Code status bar and reacts as you type — pet it for hearts, recolor it, and watch it doze off when you idle. A tiny, low-distraction coding companion.",
+    "version": "2.0.8",
     "publisher": "blobcat",
 
     "icon": "media/icon.png",
+
+    "galleryBanner": {
+        "color": "#1A1A1A",
+        "theme": "dark"
+    },
 
     "engines": {
         "vscode": "^1.90.0"
@@ -16,15 +21,21 @@
     ],
 
     "keywords": [
-        "blobcat",
         "cat",
         "pet",
-        "statusbar",
+        "kitten",
         "cute",
-        "animation",
-        "vscode",
+        "kawaii",
+        "status bar",
+        "statusbar",
         "mascot",
-        "fun"
+        "companion",
+        "desktop pet",
+        "animated",
+        "animation",
+        "productivity",
+        "fun",
+        "blobcat"
     ],
 
     "activationEvents": [
@@ -103,6 +114,12 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/oceanfromthewave/blobcat"
+    },
+
+    "homepage": "https://github.com/oceanfromthewave/blobcat#readme",
+
+    "bugs": {
+        "url": "https://github.com/oceanfromthewave/blobcat/issues"
     },
 
     "license": "MIT"

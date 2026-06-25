@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.8
+
+- **Marketplace listing refresh**: clearer title, description, and search keywords so the cat is easier to find when searching for "cat", "pet", or "status bar".
+- **Rewrote the README**: what BlobCat does and how it differs from panel-based pets now comes first, with a feature overview up top. Install caveats (the restart and the harmless "installation appears to be corrupt" notice) moved into an FAQ.
+- Added a `LICENSE` file (MIT), a `CONTRIBUTING.md`, and GitHub issue/PR templates.
+
 ## 2.0.7
 
 - Fix: when the startup patch of `workbench.html` failed, it failed silently — most often a permission error when VS Code is installed in a protected location — so the cat simply never appeared with no explanation. The extension now shows a warning with the failure reason and a one-click **retry** action.

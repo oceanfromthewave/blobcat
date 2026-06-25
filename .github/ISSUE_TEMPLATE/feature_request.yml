@@ -1,0 +1,23 @@
+name: 💡 Feature / cat idea
+description: Suggest a new behavior, color, or option for the cat
+title: "[Idea]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What's your idea?
+      description: A new animation, color preset, setting, reaction...
+      placeholder: A "rainbow" catColor preset, or a sleepy yawn animation.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it be fun / useful?
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Keep in mind
+      options:
+        - label: I understand BlobCat lives in the status bar only (no roaming pets / panels).

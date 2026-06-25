@@ -1,0 +1,61 @@
+name: 🐛 Bug report
+description: The cat misbehaves (didn't show up, won't go away, broke something)
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting! Workbench injection behaves differently across platforms, so details really help.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did the cat do instead?
+      placeholder: The cat never appeared in the status bar after restarting...
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+  - type: input
+    id: vscode-version
+    attributes:
+      label: VS Code version
+      description: "Help → About (or `code --version`)"
+      placeholder: "1.95.0"
+    validations:
+      required: true
+  - type: input
+    id: blobcat-version
+    attributes:
+      label: BlobCat version
+      placeholder: "2.0.7"
+    validations:
+      required: true
+  - type: input
+    id: install-path
+    attributes:
+      label: VS Code install location
+      description: Protected paths like C:\Program Files can block the workbench patch.
+      placeholder: "C:\\Program Files\\Microsoft VS Code"
+  - type: textarea
+    id: command-output
+    attributes:
+      label: Output of "Cat Pet: Install Status Bar Pet"
+      description: Run that command from the Command Palette and paste any success/error message.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I fully quit and reopened VS Code (not just Reload Window).
+          required: true
+        - label: I searched existing issues.
+          required: true
