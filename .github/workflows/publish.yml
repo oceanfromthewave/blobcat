@@ -8,21 +8,70 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # Only publish when package.json "version" actually changed in this push.
+      # This lets doc-only / chore commits land on main without the publish job
+      # failing on an already-published version.
+      - name: Detect version bump
+        id: ver
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          if git cat-file -e HEAD~1:package.json 2>/dev/null; then
+            git show HEAD~1:package.json > /tmp/prev-package.json
+            PREVIOUS=$(node -p "require('/tmp/prev-package.json').version || ''")
+          else
+            PREVIOUS=""
+          fi
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          if [ "$CURRENT" != "$PREVIOUS" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Version changed: '$PREVIOUS' -> '$CURRENT' — will publish."
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Version unchanged ('$CURRENT') — skipping publish."
+          fi
+
       - name: Install dependencies
+        if: steps.ver.outputs.changed == 'true'
         run: npm install
 
       - name: Install vsce
+        if: steps.ver.outputs.changed == 'true'
         run: npm install -g @vscode/vsce
 
-      - name: Publish extension
+      - name: Publish to Marketplace
+        if: steps.ver.outputs.changed == 'true'
         run: vsce publish -p ${{ secrets.VSCE_TOKEN }}
+
+      # Best-effort: mirror the release on GitHub using the matching CHANGELOG section.
+      # Never fails the job (the Marketplace publish above is the important part).
+      - name: Create GitHub Release
+        if: steps.ver.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.ver.outputs.current }}
+        run: |
+          NOTES=$(awk -v ver="## $VERSION" '
+            $0 == ver { flag = 1; next }
+            /^## / && flag { exit }
+            flag { print }
+          ' CHANGELOG.md)
+          if [ -z "$NOTES" ]; then NOTES="See CHANGELOG.md for details."; fi
+          gh release create "v$VERSION" \
+            --title "v$VERSION" \
+            --notes "$NOTES" \
+            --target "$GITHUB_SHA" \
+            || echo "Release v$VERSION may already exist; continuing."

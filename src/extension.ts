@@ -5,6 +5,11 @@ import * as path from 'path';
 const MARKER_START = '<!-- CAT_PET_INJECT_START -->';
 const MARKER_END = '<!-- CAT_PET_INJECT_END -->';
 const LEGACY_CLEANUP_KEY = 'cat-pet.legacyDesktopMainCleaned';
+const WELCOMED_KEY = 'cat-pet.welcomed';
+const FIRST_SEEN_KEY = 'cat-pet.firstSeen';
+const REVIEW_ASKED_KEY = 'cat-pet.reviewAsked';
+const REVIEW_DELAY_MS = 3 * 24 * 60 * 60 * 1000; // ask only after 3 days of use
+const REVIEW_URL = 'https://marketplace.visualstudio.com/items?itemName=blobcat.cat-pet-statusbar&ssr=false#review-details';
 
 type InstallResult =
     | { status: 'installed' }
@@ -32,7 +37,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand('cat-pet.install', () => install(context, false)),
-        vscode.commands.registerCommand('cat-pet.uninstall', () => uninstall())
+        vscode.commands.registerCommand('cat-pet.uninstall', () => uninstall()),
+        vscode.commands.registerCommand('cat-pet.chooseColor', () => chooseColor())
     );
 
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async e => {
@@ -43,12 +49,22 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }));
 
+    if (!context.globalState.get(FIRST_SEEN_KEY)) {
+        void context.globalState.update(FIRST_SEEN_KEY, Date.now());
+    }
+
     void runStartupInstall(context);
+
+    // Once the cat has had a few days to win the user over, ask (once) for a review.
+    setTimeout(() => void maybeAskForReview(context), 8000);
 }
 
 async function runStartupInstall(context: vscode.ExtensionContext): Promise<void> {
     const result = await install(context, true);
-    if (result.status === 'installed' || result.status === 'unchanged') return;
+    if (result.status === 'installed' || result.status === 'unchanged') {
+        await maybeShowWelcome(context, result);
+        return;
+    }
 
     const reason = result.status === 'workbench-not-found'
         ? "Couldn't find VS Code's workbench.html."
@@ -62,6 +78,39 @@ async function runStartupInstall(context: vscode.ExtensionContext): Promise<void
     );
     if (choice === retry) {
         await install(context, false);
+    }
+}
+
+// One-time friendly heads-up the first time the cat is installed, so the required
+// restart and the harmless "installation appears to be corrupt" notice don't scare
+// new users into uninstalling.
+async function maybeShowWelcome(context: vscode.ExtensionContext, result: InstallResult): Promise<void> {
+    if (result.status !== 'installed') return; // only on a genuinely fresh injection, not existing users
+    if (context.globalState.get(WELCOMED_KEY)) return;
+    await context.globalState.update(WELCOMED_KEY, true);
+    void vscode.window.showInformationMessage(
+        'BlobCat is installed! 🐱 Fully quit and reopen VS Code to meet your cat in the status bar. ' +
+        'VS Code may show a one-time "installation appears to be corrupt" notice — that is expected and harmless.',
+        'Got it'
+    );
+}
+
+// One-time, dismissible review nudge after the user has kept BlobCat for a few days.
+// Reviews are the cheapest Marketplace ranking boost, so a single well-timed ask helps.
+async function maybeAskForReview(context: vscode.ExtensionContext): Promise<void> {
+    if (context.globalState.get(REVIEW_ASKED_KEY)) return;
+    const firstSeen = context.globalState.get<number>(FIRST_SEEN_KEY) ?? Date.now();
+    if (Date.now() - firstSeen < REVIEW_DELAY_MS) return;
+
+    await context.globalState.update(REVIEW_ASKED_KEY, true);
+    const rate = '★ Rate BlobCat';
+    const choice = await vscode.window.showInformationMessage(
+        'Enjoying BlobCat? 🐱 A quick review on the Marketplace really helps other people find it!',
+        rate,
+        'Not now'
+    );
+    if (choice === rate) {
+        void vscode.env.openExternal(vscode.Uri.parse(REVIEW_URL));
     }
 }
 
@@ -161,6 +210,36 @@ async function uninstall() {
         vscode.window.showInformationMessage('Cat removed — please restart VS Code.');
     } catch (err: any) {
         vscode.window.showErrorMessage('Uninstall failed: ' + err.message);
+    }
+}
+
+// Discoverable color picker so users don't have to know the settings keys exist.
+// Writing the setting triggers onDidChangeConfiguration, which re-injects and prompts a restart.
+async function chooseColor(): Promise<void> {
+    const presets = [
+        { label: 'White', description: '#FFFFFF', preset: 'white' },
+        { label: 'Peach', description: '#FFB6A3', preset: 'peach' },
+        { label: 'Pink', description: '#FFC0CB', preset: 'pink' },
+        { label: 'Mint', description: '#A8E6CF', preset: 'mint' },
+        { label: 'Lilac', description: '#B5A8FF', preset: 'lilac' },
+        { label: 'Orange', description: '#FFA94D', preset: 'orange' },
+        { label: 'Gray', description: '#C7CBD1', preset: 'gray' },
+        { label: 'Custom…', description: 'Enter your own CSS color', preset: 'custom' },
+    ];
+    const pick = await vscode.window.showQuickPick(presets, { placeHolder: 'Pick a color for your BlobCat 🐱' });
+    if (!pick) return;
+
+    const cfg = vscode.workspace.getConfiguration('blobcat');
+    if (pick.preset === 'custom') {
+        const color = await vscode.window.showInputBox({
+            prompt: 'Enter a CSS color for the cat (e.g. #FFB6A3, orange, hsl(20, 100%, 80%))',
+            value: cfg.get<string>('catColor', '#FFFFFF'),
+        });
+        if (color === undefined) return;
+        await cfg.update('catColor', color, vscode.ConfigurationTarget.Global);
+        await cfg.update('catPreset', 'custom', vscode.ConfigurationTarget.Global);
+    } else {
+        await cfg.update('catPreset', pick.preset, vscode.ConfigurationTarget.Global);
     }
 }
 

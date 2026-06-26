@@ -33,20 +33,18 @@ Most VS Code pets open a panel or floating window that eats your screen. **BlobC
 
 ## ✨ Features
 
+<div align="center">
+<img src="docs/states.png" alt="BlobCat reacting: idle, jumping when you type, hearts when you pet it, asleep when you go idle" width="820" />
+</div>
+
 | | |
 |---|---|
 | ⌨️ **Reacts to typing** | The cat jumps with each keystroke, with optional pink particles. |
 | 🫶 **Pet it** | Click the cat for a happy wiggle and a burst of hearts. |
 | 😴 **Sleep mode** | After 30s of no typing, the cat closes its eyes and slows down. |
-| 🎨 **Custom color** | Set `blobcat.catColor` to any CSS color to match your theme. |
+| 🎨 **7 color presets** | Pick white / peach / pink / mint / lilac / orange / gray — or any custom CSS color. |
 | 🔍 **Scale & opacity** | Make it bigger, smaller, or more subtle. |
 | 🪶 **Status bar only** | No panel, no window — it never covers your code. |
-
-<!-- TODO(growth): add a "See it in action" gallery once GIFs exist:
-docs/typing.gif  (jump + particles)
-docs/petting.gif (click → hearts)
-docs/colors.png  (a row of recolored cats: white / orange / pink / mint)
--->
 
 ## 🚀 Install
 
@@ -59,6 +57,8 @@ docs/colors.png  (a row of recolored cats: white / orange / pink / mint)
 ## ⚙️ Settings
 
 All settings live under `blobcat.*` (Settings UI → search “BlobCat”). Changing one rewrites `workbench.html`, so **restart VS Code** to see it.
+
+> 💡 **Quickest recolor:** run **`BlobCat: Choose Cat Color`** from the Command Palette and pick from the list — no need to hunt for the setting.
 
 | Setting | Default | Description |
 |---|---|---|
@@ -110,6 +110,10 @@ To remove it by hand, delete everything between `<!-- CAT_PET_INJECT_START -->` 
 
 [vscode-pets](https://marketplace.visualstudio.com/items?itemName=tonybaloney.vscode-pets) is great — it gives you many pets that roam a dedicated panel. BlobCat is the opposite trade-off: **one cat, in the status bar, that reacts to your typing, taking zero screen space.** Pick the vibe you want. 🐾
 </details>
+
+## ⭐ Enjoying BlobCat?
+
+A quick [**review on the Marketplace**](https://marketplace.visualstudio.com/items?itemName=blobcat.cat-pet-statusbar&ssr=false#review-details) is the single best way to help other people find the cat — it takes 10 seconds and genuinely helps. 🐾
 
 ## 🤝 Contributing
 

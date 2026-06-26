@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.0
+
+- **New command — `BlobCat: Choose Cat Color`**: pick a color from a quick list (or enter your own) without digging through settings.
+- **First-run welcome**: the first time the cat is installed, BlobCat now shows a short heads-up that you need to fully restart VS Code and that the one-time "installation appears to be corrupt" notice is expected — so new users aren't confused into uninstalling.
+- A gentle, one-time review prompt appears after you've kept BlobCat for a few days. Dismiss it with "Not now" and it won't ask again.
+- Declared the extension as a UI extension so it installs on the local machine in Remote-SSH / WSL / Codespaces sessions, where the workbench it patches actually lives.
+
 ## 2.1.0
 
 - **New**: `blobcat.catPreset` — pick a ready-made cat color from a dropdown (white, peach, pink, mint, lilac, orange, gray) without hunting for a hex code. Set it to `custom` to keep using your own `blobcat.catColor`.
