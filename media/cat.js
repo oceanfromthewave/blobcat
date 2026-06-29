@@ -3,6 +3,7 @@
         enableSleep: true,
         enableParticles: true,
         enablePetting: true,
+        enableGreeting: true,
         catScale: 1,
         catOpacity: 1,
         catColor: '#FFFFFF'
@@ -309,6 +310,25 @@
                 if (svg.classList.contains('is-petting') || svg.classList.contains('is-jumping')) return;
                 svg.classList.add('is-petting');
                 spawnHearts(container);
+                const onEnd = (e) => {
+                    if (e.animationName !== 'cat-pet-wiggle') return;
+                    svg.classList.remove('is-petting');
+                    svg.removeEventListener('animationend', onEnd);
+                };
+                svg.addEventListener('animationend', onEnd);
+            });
+        }
+
+        if (CONFIG.enableGreeting) {
+            let awaySince = 0;
+            window.addEventListener('blur', () => { awaySince = Date.now(); });
+            window.addEventListener('focus', () => {
+                if (!awaySince || Date.now() - awaySince < 20000) return; // greet only after being away >= 20s
+                awaySince = 0;
+                svg.classList.remove('is-sleeping');
+                scheduleSleep();
+                if (svg.classList.contains('is-petting') || svg.classList.contains('is-jumping')) return;
+                svg.classList.add('is-petting'); // reuse the petting wiggle as a "welcome back" wave
                 const onEnd = (e) => {
                     if (e.animationName !== 'cat-pet-wiggle') return;
                     svg.classList.remove('is-petting');

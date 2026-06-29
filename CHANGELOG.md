@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.0
+
+- **New**: the cat now does a little welcome-back wave when you return to VS Code after being away. Toggle with `blobcat.enableGreeting` (default `true`).
+- All commands are now grouped under **BlobCat:** in the Command Palette (Install / Remove / Choose Cat Color), so you can find them by searching "BlobCat".
+
 ## 2.2.0
 
 - **New command — `BlobCat: Choose Cat Color`**: pick a color from a quick list (or enter your own) without digging through settings.

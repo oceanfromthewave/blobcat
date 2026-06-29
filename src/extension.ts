@@ -133,6 +133,7 @@ function readConfig() {
         enableSleep: cfg.get<boolean>('enableSleep', true),
         enableParticles: cfg.get<boolean>('enableParticles', true),
         enablePetting: cfg.get<boolean>('enablePetting', true),
+        enableGreeting: cfg.get<boolean>('enableGreeting', true),
         catScale: cfg.get<number>('catScale', 1),
         catOpacity: cfg.get<number>('catOpacity', 1),
         catColor,

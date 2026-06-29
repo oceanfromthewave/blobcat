@@ -42,6 +42,7 @@ Most VS Code pets open a panel or floating window that eats your screen. **BlobC
 | ⌨️ **Reacts to typing** | The cat jumps with each keystroke, with optional pink particles. |
 | 🫶 **Pet it** | Click the cat for a happy wiggle and a burst of hearts. |
 | 😴 **Sleep mode** | After 30s of no typing, the cat closes its eyes and slows down. |
+| 👋 **Welcome back** | The cat waves when you return to VS Code after stepping away. |
 | 🎨 **7 color presets** | Pick white / peach / pink / mint / lilac / orange / gray — or any custom CSS color. |
 | 🔍 **Scale & opacity** | Make it bigger, smaller, or more subtle. |
 | 🪶 **Status bar only** | No panel, no window — it never covers your code. |
@@ -65,6 +66,7 @@ All settings live under `blobcat.*` (Settings UI → search “BlobCat”). Chan
 | `blobcat.enableSleep` | `true` | Close the cat's eyes after 30 seconds of inactivity. |
 | `blobcat.enableParticles` | `true` | Pink particles when the cat jumps on a keystroke. |
 | `blobcat.enablePetting` | `true` | Click the cat to pet it — wiggle + heart particles. |
+| `blobcat.enableGreeting` | `true` | The cat waves when you return to VS Code after being away. |
 | `blobcat.catPreset` | `custom` | Pick a ready-made color: `white`, `peach`, `pink`, `mint`, `lilac`, `orange`, `gray`. Use `custom` to fall back to `catColor`. |
 | `blobcat.catColor` | `#FFFFFF` | Custom body/tail color — any CSS color, e.g. `orange`, `#FFB6A3`. Used only when `catPreset` is `custom`. |
 | `blobcat.catScale` | `1` | Size multiplier (`0.5`–`3`). |
@@ -90,7 +92,7 @@ No. To render the cat, BlobCat adds a `<script>` tag to VS Code's `workbench.htm
 The startup patch can fail silently, most often when VS Code is installed in a protected location (e.g. `C:\Program Files\`). To run it manually and see the error:
 
 1. Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`).
-2. Run **`Cat Pet: Install Status Bar Pet`** — it reports success or the reason it failed.
+2. Run **`BlobCat: Install Status Bar Pet`** — it reports success or the reason it failed.
 3. Restart VS Code.
 
 If it's a permission error, launch VS Code once as administrator, run the command, then restart normally.
@@ -99,7 +101,7 @@ If it's a permission error, launch VS Code once as administrator, run the comman
 <details>
 <summary><b>How do I remove it?</b></summary>
 
-Command Palette → **`Cat Pet: Remove Status Bar Pet`** → restart VS Code. That restores the original `workbench.html` from its backup.
+Command Palette → **`BlobCat: Remove Status Bar Pet`** → restart VS Code. That restores the original `workbench.html` from its backup.
 
 To remove it by hand, delete everything between `<!-- CAT_PET_INJECT_START -->` and `<!-- CAT_PET_INJECT_END -->` in
 `<VS Code install path>/resources/app/out/vs/code/electron-browser/workbench/workbench.html`.
