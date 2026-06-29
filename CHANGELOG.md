@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.1
+
+- Added an animated demo to the README/Marketplace listing so you can see the cat jump, spark particles, and throw hearts at a glance.
+
 ## 2.3.0
 
 - **New**: the cat now does a little welcome-back wave when you return to VS Code after being away. Toggle with `blobcat.enableGreeting` (default `true`).

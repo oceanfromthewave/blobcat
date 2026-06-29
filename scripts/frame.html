@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 420px; height: 150px; }
+  body { background: #1e1e1e; overflow: hidden; font-family: "Segoe UI", system-ui, sans-serif; }
+  .editor { height: 118px; padding: 14px 18px; }
+  .ln { height: 9px; border-radius: 3px; margin-bottom: 9px; opacity: .5; }
+  .c1 { width: 150px; background: #c586c0; }
+  .c2 { width: 220px; background: #569cd6; }
+  .c3 { width: 120px; background: #4ec9b0; margin-left: 22px; }
+  .c4 { width: 190px; background: #ce9178; margin-left: 22px; }
+  .bar {
+    height: 32px; background: #007acc; display: flex; align-items: center;
+    color: #fff; font-size: 12px; justify-content: space-between; padding-right: 10px;
+  }
+  .left { display: flex; align-items: center; }
+  .seg { padding: 0 9px; }
+  .catwrap { position: relative; width: 34px; height: 32px; display: flex; align-items: flex-end; padding-left: 6px; }
+  #cat { width: 28px; height: 28px; transform-origin: center bottom; overflow: visible; }
+  .p { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #FFD1DC; bottom: 6px; left: 16px; }
+  .heart { position: absolute; bottom: 22px; left: 13px; color: #FF4D6D; font-size: 11px; }
+</style>
+</head>
+<body>
+  <div class="editor">
+    <div class="ln c1"></div><div class="ln c2"></div><div class="ln c3"></div><div class="ln c4"></div>
+  </div>
+  <div class="bar">
+    <div class="left">
+      <span class="catwrap" id="catwrap"></span>
+      <span class="seg">⎇ main</span>
+    </div>
+    <span class="seg">Ln 12, Col 8</span>
+  </div>
+<script>
+  const q = new URLSearchParams(location.search);
+  const n = (k, d) => { const v = parseFloat(q.get(k)); return isNaN(v) ? d : v; };
+  const ty = n('ty', 0), sx = n('sx', 1), sy = n('sy', 1), rot = n('rot', 0);
+  const eye = n('eye', 1);        // 1 = open, 0 = squint
+  const cheekPet = n('cheek', 0); // 0 = normal, 1 = petting
+  const parts = n('parts', 0);    // 0..1 particle progress (0 = none)
+  const hearts = n('hearts', 0);  // 0..1 heart progress
+
+  const cheek = cheekPet > 0.5 ? '#FF6F8A' : '#FFD1DC';
+  let eyes;
+  if (eye < 0.5) {
+    eyes = `<path d="M36 56 Q40 58 44 56" fill="none" stroke="#333" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M56 56 Q60 58 64 56" fill="none" stroke="#333" stroke-width="2.4" stroke-linecap="round"/>`;
+  } else {
+    eyes = `<circle cx="40" cy="55" r="4" fill="#333"/><circle cx="38.8" cy="53.8" r="1.2" fill="#fff"/>
+            <circle cx="60" cy="55" r="4" fill="#333"/><circle cx="58.8" cy="53.8" r="1.2" fill="#fff"/>`;
+  }
+  const mouth = eye < 0.5
+    ? `<path d="M43 64 Q50 74 57 64" fill="none" stroke="#333" stroke-width="2"/>`
+    : `<path d="M45 65 Q50 70 55 65" fill="none" stroke="#333" stroke-width="2"/>`;
+  const svg = `
+  <svg id="cat" viewBox="0 0 100 100" style="color:#FFFFFF; transform: translateY(${ty}px) scaleX(${sx}) scaleY(${sy}) rotate(${rot}deg);">
+    <path d="M 78 75 Q 92 68 90 52" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+    <path d="M20 80 Q20 40 50 40 Q80 40 80 80 Z" fill="currentColor" stroke="#E0E0E0" stroke-width="2"/>
+    <path d="M34 41 Q30 30 40 38 Z" fill="currentColor" stroke="#E0E0E0"/>
+    <path d="M35 39 Q32 33 38 37 Z" fill="#FFD1DC"/>
+    <path d="M66 41 Q70 30 60 38 Z" fill="currentColor" stroke="#E0E0E0"/>
+    <path d="M65 39 Q68 33 62 37 Z" fill="#FFD1DC"/>
+    ${eyes}
+    <circle cx="32" cy="62" r="5" fill="${cheek}"/>
+    <circle cx="68" cy="62" r="5" fill="${cheek}"/>
+    ${mouth}
+  </svg>`;
+
+  const wrap = document.getElementById('catwrap');
+  wrap.innerHTML = svg;
+
+  // particles spreading outward as parts goes 0->1
+  if (parts > 0) {
+    const offs = [[-10,-7],[10,-7],[-6,3],[6,3]];
+    offs.forEach(o => {
+      const p = document.createElement('div');
+      p.className = 'p';
+      p.style.transform = `translate(${o[0]*parts}px, ${o[1]*parts}px) scale(${1 - parts*0.7})`;
+      p.style.opacity = String(Math.max(0, 1 - parts));
+      wrap.appendChild(p);
+    });
+  }
+  // hearts rising as hearts goes 0->1
+  if (hearts > 0) {
+    [[-6,0],[4,-4],[12,0]].forEach((o,i) => {
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.textContent = '♥';
+      h.style.transform = `translate(${o[0]}px, ${-22*hearts + o[1]}px) scale(${0.5 + hearts*0.5})`;
+      h.style.opacity = String(hearts < 0.2 ? hearts*5 : Math.max(0, 1.2 - hearts));
+      wrap.appendChild(h);
+    });
+  }
+</script>
+</body>
+</html>

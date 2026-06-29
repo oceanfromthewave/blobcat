@@ -2,7 +2,7 @@
     "name": "cat-pet-statusbar",
     "displayName": "BlobCat — Cute Cat Pet in Your Status Bar 🐱",
     "description": "A cute animated cat that lives in your VS Code status bar and reacts as you type — pet it for hearts, recolor it, and watch it doze off when you idle. A tiny, low-distraction coding companion.",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "publisher": "blobcat",
 
     "icon": "media/icon.png",

@@ -15,6 +15,8 @@ No panel. No window. No screen space. Just a cute kitty in the corner that jumps
 
 [**Install from the Marketplace →**](https://marketplace.visualstudio.com/items?itemName=blobcat.cat-pet-statusbar)
 
+<img src="docs/demo.gif" alt="The BlobCat cat jumping with particles as you type, then showing hearts when petted, in the VS Code status bar" width="440" />
+
 </div>
 
 ---
