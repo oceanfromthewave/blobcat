@@ -23,3 +23,6 @@ Thumbs.db
 
 # typescript
 *.tsbuildinfo
+
+# local work log
+record.md

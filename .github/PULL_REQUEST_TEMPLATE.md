@@ -9,7 +9,7 @@
 - [ ] User-facing text (README / CHANGELOG / notifications) is in **English**.
 - [ ] I did **not** bump `version` in `package.json` (maintainers handle releases — pushing a bump to `main` auto-publishes).
 - [ ] I added a `CHANGELOG.md` entry.
-- [ ] I tested in the Extension Development Host (F5 → `Cat Pet: Install Status Bar Pet` → restart).
+- [ ] I tested in the Extension Development Host (F5 → `BlobCat: Install Status Bar Pet` → restart).
 
 ## Screenshots / GIF
 

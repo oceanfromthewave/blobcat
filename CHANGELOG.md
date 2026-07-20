@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.3.2
+
+- **Much smaller download**: the Marketplace icon was shipping at 1254×1254 even though it renders at 128px. Resizing it cut the extension from 568 KB to 48 KB — a faster install for the same cat.
+- Reordered the Marketplace search keywords so BlobCat actually turns up when you search for "status bar" or "vscode pet".
+- Questions from the Marketplace now go to GitHub Issues, where they'll actually get answered.
+- Fixed contributor docs that still referenced the old `Cat Pet:` command names (they've been `BlobCat:` since 2.3.0).
+
 ## 2.3.1
 
 - Added an animated demo to the README/Marketplace listing so you can see the cat jump, spark particles, and throw hearts at a glance.
