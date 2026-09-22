@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.3
+
+- Internal housekeeping: local promo drafts are no longer tracked in the repo. No user-facing changes.
+
 ## 2.3.2
 
 - **Much smaller download**: the Marketplace icon was shipping at 1254×1254 even though it renders at 128px. Resizing it cut the extension from 568 KB to 48 KB — a faster install for the same cat.
