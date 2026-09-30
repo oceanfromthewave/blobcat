@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.6
+
+- README: the "How do I remove it?" FAQ now says to run **BlobCat: Remove Status Bar Pet** *before* disabling or uninstalling — otherwise the cat stays behind — and how to recover if you already uninstalled.
+
 ## 2.3.5
 
 - **Fix**: reverted the 2.3.4 auto-cleanup. It stripped the patch on every VS Code shutdown/reload (VS Code gives extensions no way to tell a reload from an uninstall), so the cat could stop appearing after restarts. Behavior is back to 2.3.3.

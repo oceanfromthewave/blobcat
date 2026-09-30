@@ -105,6 +105,8 @@ If it's a permission error, launch VS Code once as administrator, run the comman
 
 Command Palette → **`BlobCat: Remove Status Bar Pet`** → restart VS Code. That restores the original `workbench.html` from its backup.
 
+> **Do this *before* you disable or uninstall the extension.** The cat lives in `workbench.html`, not in the extension itself, so disabling or uninstalling BlobCat on its own leaves the cat in place. If you already uninstalled it, reinstall BlobCat, run **Remove Status Bar Pet**, restart, then uninstall.
+
 To remove it by hand, delete everything between `<!-- CAT_PET_INJECT_START -->` and `<!-- CAT_PET_INJECT_END -->` in
 `<VS Code install path>/resources/app/out/vs/code/electron-browser/workbench/workbench.html`.
 </details>
