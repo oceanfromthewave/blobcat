@@ -140,7 +140,17 @@ function readConfig() {
     };
 }
 
-export function deactivate() {}
+// Restore workbench.html so disabling/uninstalling the extension actually removes the cat,
+// instead of leaving it stuck in a static HTML file the extension no longer controls.
+// Safe to run on every deactivate: the marker-based patch is idempotent and activate()
+// unconditionally reinstalls it on the next startup, so restart cycles cause no flicker.
+export function deactivate() {
+    try {
+        restoreWorkbenchHtml();
+    } catch {
+        /* best-effort — the uninstall command surfaces failures for the manual path */
+    }
+}
 
 function findWorkbenchHtml(): string | null {
     const appRoot = vscode.env.appRoot;
@@ -191,6 +201,20 @@ async function install(context: vscode.ExtensionContext, silent: boolean): Promi
     }
 }
 
+function restoreWorkbenchHtml(): void {
+    const htmlPath = findWorkbenchHtml();
+    if (!htmlPath) return;
+    const backupPath = htmlPath + '.cat-backup';
+    if (fs.existsSync(backupPath)) {
+        fs.copyFileSync(backupPath, htmlPath);
+    } else {
+        let html = fs.readFileSync(htmlPath, 'utf-8');
+        const re = new RegExp(`\\n?${escapeRegex(MARKER_START)}[\\s\\S]*?${escapeRegex(MARKER_END)}\\n?`, 'g');
+        html = html.replace(re, '');
+        fs.writeFileSync(htmlPath, html);
+    }
+}
+
 async function uninstall() {
     const htmlPath = findWorkbenchHtml();
     if (!htmlPath) {
@@ -199,15 +223,7 @@ async function uninstall() {
     }
 
     try {
-        const backupPath = htmlPath + '.cat-backup';
-        if (fs.existsSync(backupPath)) {
-            fs.copyFileSync(backupPath, htmlPath);
-        } else {
-            let html = fs.readFileSync(htmlPath, 'utf-8');
-            const re = new RegExp(`\\n?${escapeRegex(MARKER_START)}[\\s\\S]*?${escapeRegex(MARKER_END)}\\n?`, 'g');
-            html = html.replace(re, '');
-            fs.writeFileSync(htmlPath, html);
-        }
+        restoreWorkbenchHtml();
         vscode.window.showInformationMessage('Cat removed — please restart VS Code.');
     } catch (err: any) {
         vscode.window.showErrorMessage('Uninstall failed: ' + err.message);

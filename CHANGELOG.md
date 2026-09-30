@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.4
+
+- **Fix**: disabling or uninstalling BlobCat now actually removes the cat from `workbench.html`. Previously the injected patch had no cleanup hook, so it stuck around until you ran `BlobCat: Remove Status Bar Pet` by hand — reported by a Marketplace review.
+
 ## 2.3.3
 
 - Internal housekeeping: local promo drafts are no longer tracked in the repo. No user-facing changes.
