@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.5
+
+- **Fix**: reverted the 2.3.4 auto-cleanup. It stripped the patch on every VS Code shutdown/reload (VS Code gives extensions no way to tell a reload from an uninstall), so the cat could stop appearing after restarts. Behavior is back to 2.3.3.
+- To remove the cat, run **BlobCat: Remove Status Bar Pet** from the Command Palette *before* disabling or uninstalling the extension.
+
 ## 2.3.4
 
 - **Fix**: disabling or uninstalling BlobCat now actually removes the cat from `workbench.html`. Previously the injected patch had no cleanup hook, so it stuck around until you ran `BlobCat: Remove Status Bar Pet` by hand — reported by a Marketplace review.
