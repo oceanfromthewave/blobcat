@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.4.0
+
+- **New**: the cat gets startled — jumps, shakes, eyes go wide — when a file you're editing gains new errors (red squiggles). It waits until you stop typing, so half-typed code doesn't set it off, and it reacts at most once every 3 seconds. Toggle with `blobcat.enableErrorReaction` (default `true`).
+
 ## 2.3.6
 
 - README: the "How do I remove it?" FAQ now says to run **BlobCat: Remove Status Bar Pet** *before* disabling or uninstalling — otherwise the cat stays behind — and how to recover if you already uninstalled.

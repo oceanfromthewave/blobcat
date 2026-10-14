@@ -45,6 +45,7 @@ Most VS Code pets open a panel or floating window that eats your screen. **BlobC
 | 🫶 **Pet it** | Click the cat for a happy wiggle and a burst of hearts. |
 | 😴 **Sleep mode** | After 30s of no typing, the cat closes its eyes and slows down. |
 | 👋 **Welcome back** | The cat waves when you return to VS Code after stepping away. |
+| 😱 **Error startle** | The cat jumps in fright when a file gets new errors (red squiggles). |
 | 🎨 **7 color presets** | Pick white / peach / pink / mint / lilac / orange / gray — or any custom CSS color. |
 | 🔍 **Scale & opacity** | Make it bigger, smaller, or more subtle. |
 | 🪶 **Status bar only** | No panel, no window — it never covers your code. |
@@ -69,6 +70,7 @@ All settings live under `blobcat.*` (Settings UI → search “BlobCat”). Chan
 | `blobcat.enableParticles` | `true` | Pink particles when the cat jumps on a keystroke. |
 | `blobcat.enablePetting` | `true` | Click the cat to pet it — wiggle + heart particles. |
 | `blobcat.enableGreeting` | `true` | The cat waves when you return to VS Code after being away. |
+| `blobcat.enableErrorReaction` | `true` | The cat gets startled when a file gains new errors. |
 | `blobcat.catPreset` | `custom` | Pick a ready-made color: `white`, `peach`, `pink`, `mint`, `lilac`, `orange`, `gray`. Use `custom` to fall back to `catColor`. |
 | `blobcat.catColor` | `#FFFFFF` | Custom body/tail color — any CSS color, e.g. `orange`, `#FFB6A3`. Used only when `catPreset` is `custom`. |
 | `blobcat.catScale` | `1` | Size multiplier (`0.5`–`3`). |

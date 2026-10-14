@@ -44,11 +44,57 @@ function activate(context) {
     signal.text = 'IDLE';
     signal.show();
     context.subscriptions.push(signal);
-    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(e => {
-        if (e.contentChanges.length > 0) {
-            signal.text = 'TYPING';
-            setTimeout(() => { signal.text = 'IDLE'; }, 250);
+    let resetTimer;
+    let errorHoldUntil = 0;
+    const flash = (text, ms) => {
+        if (text === 'TYPING' && Date.now() < errorHoldUntil)
+            return;
+        if (text === 'ERROR')
+            errorHoldUntil = Date.now() + ms;
+        clearTimeout(resetTimer);
+        signal.text = text;
+        resetTimer = setTimeout(() => { signal.text = 'IDLE'; }, ms);
+    };
+    // Startle only for errors that are still there once typing settles, in a file the user just edited
+    // (so half-typed code and freshly opened broken files don't set the cat off).
+    const errorCounts = new Map();
+    const baseline = new Map();
+    const editedAt = new Map();
+    let settleTimer;
+    let lastStartle = 0;
+    const settle = () => {
+        let increased = false;
+        for (const [key, count] of errorCounts) {
+            const recentlyEdited = Date.now() - (editedAt.get(key) ?? 0) < 10000;
+            if (recentlyEdited && count > (baseline.get(key) ?? 0))
+                increased = true;
+            baseline.set(key, count);
         }
+        if (!increased || Date.now() - lastStartle < 3000)
+            return;
+        if (!vscode.workspace.getConfiguration('blobcat').get('enableErrorReaction', true))
+            return;
+        lastStartle = Date.now();
+        flash('ERROR', 400);
+    };
+    const scheduleSettle = () => {
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(settle, 800);
+    };
+    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(e => {
+        if (e.contentChanges.length === 0)
+            return;
+        flash('TYPING', 250);
+        editedAt.set(e.document.uri.toString(), Date.now());
+        if (settleTimer)
+            scheduleSettle();
+    }));
+    context.subscriptions.push(vscode.languages.onDidChangeDiagnostics(e => {
+        for (const uri of e.uris) {
+            errorCounts.set(uri.toString(), vscode.languages.getDiagnostics(uri)
+                .filter(d => d.severity === vscode.DiagnosticSeverity.Error).length);
+        }
+        scheduleSettle();
     }));
     context.subscriptions.push(vscode.commands.registerCommand('cat-pet.install', () => install(context, false)), vscode.commands.registerCommand('cat-pet.uninstall', () => uninstall()), vscode.commands.registerCommand('cat-pet.chooseColor', () => chooseColor()));
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async (e) => {

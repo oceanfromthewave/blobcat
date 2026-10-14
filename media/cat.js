@@ -154,6 +154,24 @@
             #cat-pet-svg.is-petting .cat-cheek { fill: #FF6F8A; }
             #cat-pet-svg.is-petting .cat-eye { transform: scaleY(0.12); }
 
+            @keyframes cat-startle {
+                0%   { transform: translateY(0) rotate(0deg); }
+                20%  { transform: translateY(-10px) scale(1.1); }
+                35%  { transform: translateY(-5px) rotate(-8deg); }
+                50%  { transform: translateY(-3px) rotate(8deg); }
+                65%  { transform: rotate(-5deg); }
+                80%  { transform: rotate(3deg); }
+                100% { transform: translateY(0) rotate(0deg); }
+            }
+            #cat-pet-svg.is-startled {
+                animation: cat-startle 0.7s ease-out forwards;
+                transition: none;
+            }
+            #cat-pet-svg.is-startled .cat-eye { transform: scale(1.5); }
+            #cat-pet-svg.is-startled .cat-mouth-idle { display: none; }
+            #cat-pet-svg.is-startled .cat-mouth-jump { display: block; }
+            #cat-pet-svg.is-startled #cat-pet-tail { animation-duration: 0.25s; }
+
             .cat-heart {
                 position: absolute;
                 width: 10px; height: 10px;
@@ -344,13 +362,29 @@
 
         const observer = new MutationObserver(() => {
             const sig = document.querySelector('[id*="cat-pet-signal"]');
-            const isTyping = sig && (sig.textContent || '').includes('TYPING');
-            if (!isTyping) return;
+            const text = sig ? (sig.textContent || '') : '';
+
+            if (text.includes('ERROR')) {
+                svg.classList.remove('is-sleeping');
+                scheduleSleep();
+                if (svg.classList.contains('is-petting') || svg.classList.contains('is-startled')) return;
+                svg.classList.remove('is-jumping'); // errors land right after typing; the startle replaces the jump
+                svg.classList.add('is-startled');
+                const onStartleEnd = (e) => {
+                    if (e.animationName !== 'cat-startle') return;
+                    svg.classList.remove('is-startled');
+                    svg.removeEventListener('animationend', onStartleEnd);
+                };
+                svg.addEventListener('animationend', onStartleEnd);
+                return;
+            }
+
+            if (!text.includes('TYPING')) return;
 
             svg.classList.remove('is-sleeping');
             scheduleSleep();
 
-            if (svg.classList.contains('is-jumping')) return;
+            if (svg.classList.contains('is-jumping') || svg.classList.contains('is-startled')) return;
 
             svg.classList.add('is-jumping');
             if (CONFIG.enableParticles) spawnParticles(container);
